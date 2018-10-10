@@ -1,0 +1,22 @@
+FROM nginx:alpine
+
+MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
+
+COPY nginx.conf /etc/nginx/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache bash \
+    && adduser -D -H -u 1000 -s /bin/bash www-data
+
+ARG APP_UPSTREAM_CONTAINER=app
+ARG APP_UPSTREAM_PORT=5000
+
+# Set upstream conf and remove the default conf
+RUN echo "upstream app { server ${APP_UPSTREAM_CONTAINER}:${APP_UPSTREAM_PORT}; keepalive 100; }" > /etc/nginx/conf.d/upstream.conf \
+    && rm /etc/nginx/conf.d/default.conf
+
+CMD ["nginx"]
+
+EXPOSE 80 443
