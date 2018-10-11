@@ -1,6 +1,21 @@
 from django.db import models
 
 
+def get_file_path_1(instance, _):
+    """Get file path of first file"""
+    return f'import/first_file{instance.id}.xlsx'
+
+
+def get_file_path_2(instance, _):
+    """Get file path of second file"""
+    return f'import/second_file{instance.id}.xlsx'
+
+
+def get_file_path_3(instance, _):
+    """Get file path of zip file"""
+    return f'import/zip_file{instance.id}.zip'
+
+
 class Task(models.Model):
     """Task model"""
 
@@ -17,9 +32,9 @@ class Task(models.Model):
     )
 
     name = models.CharField(verbose_name='Название', max_length=128)
-    first_file = models.FileField(verbose_name='Первый файл(excel)')
-    second_file = models.FileField(verbose_name='Второй файл(excel)')
-    zip_file = models.FileField(verbose_name='Zip файл')
+    first_file = models.FileField(verbose_name='Первый файл(excel)', upload_to=get_file_path_1)
+    second_file = models.FileField(verbose_name='Второй файл(excel)', upload_to=get_file_path_2)
+    zip_file = models.FileField(verbose_name='Zip файл', upload_to=get_file_path_3)
 
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now=True)
     status = models.PositiveIntegerField(verbose_name='Статус',

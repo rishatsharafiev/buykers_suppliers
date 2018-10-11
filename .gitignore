@@ -97,8 +97,12 @@ ENV/
 
 static/
 !apps/**/static/
+!apps/**/static/import/.gitkeep
+apps/**/static/import/*
 media/
 !apps/**/media/
+
+!apps/*
 .DS_Store
 
 json-server-mok.json
