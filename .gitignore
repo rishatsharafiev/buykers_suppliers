@@ -97,8 +97,12 @@ ENV/
 
 static/
 !apps/**/static/
+!apps/**/static/bpc/.gitkeep
+apps/**/static/bpc/*
 media/
 !apps/**/media/
+
+!apps/*
 .DS_Store
 
 json-server-mok.json
