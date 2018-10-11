@@ -30,4 +30,4 @@ class Good(models.Model):
         verbose_name_plural = 'Товары'
 
     def __str__(self):
-        return self.code
+        return f'{self.code} {self.vendor_code} {self.nomenclature}'
