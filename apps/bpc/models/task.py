@@ -3,17 +3,17 @@ from django.db import models
 
 def get_file_path_1(instance, _):
     """Get file path of first file"""
-    return f'import/first_file{instance.id}.xlsx'
+    return f'bpc/first_file{instance.id}.xlsx'
 
 
 def get_file_path_2(instance, _):
     """Get file path of second file"""
-    return f'import/second_file{instance.id}.xlsx'
+    return f'bpc/second_file{instance.id}.xlsx'
 
 
 def get_file_path_3(instance, _):
     """Get file path of zip file"""
-    return f'import/zip_file{instance.id}.zip'
+    return f'bpc/zip_file{instance.id}.zip'
 
 
 class Task(models.Model):

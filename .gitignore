@@ -97,8 +97,8 @@ ENV/
 
 static/
 !apps/**/static/
-!apps/**/static/import/.gitkeep
-apps/**/static/import/*
+!apps/**/static/bpc/.gitkeep
+apps/**/static/bpc/*
 media/
 !apps/**/media/
 
