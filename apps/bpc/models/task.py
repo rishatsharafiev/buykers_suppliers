@@ -1,19 +1,13 @@
+import uuid
+
 from django.db import models
 
 
-def get_file_path_1(instance, _):
+def get_file_path(_, filename):
     """Get file path of first file"""
-    return f'bpc/first_file{instance.id}.xlsx'
-
-
-def get_file_path_2(instance, _):
-    """Get file path of second file"""
-    return f'bpc/second_file{instance.id}.xlsx'
-
-
-def get_file_path_3(instance, _):
-    """Get file path of zip file"""
-    return f'bpc/zip_file{instance.id}.zip'
+    extension = filename.split('.')[-1]
+    id = uuid.uuid4()
+    return f'bpc/{id}.{extension}'
 
 
 class Task(models.Model):
@@ -32,9 +26,9 @@ class Task(models.Model):
     )
 
     name = models.CharField(verbose_name='Название', max_length=128)
-    first_file = models.FileField(verbose_name='Первый файл(excel)', upload_to=get_file_path_1)
-    second_file = models.FileField(verbose_name='Второй файл(excel)', upload_to=get_file_path_2)
-    zip_file = models.FileField(verbose_name='Zip файл', upload_to=get_file_path_3)
+    first_file = models.FileField(verbose_name='Первый файл(xlsx)', upload_to=get_file_path)
+    second_file = models.FileField(verbose_name='Второй файл(xlsx)', upload_to=get_file_path)
+    zip_file = models.FileField(verbose_name='Zip файл', upload_to=get_file_path)
 
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now=True)
     status = models.PositiveIntegerField(verbose_name='Статус',
