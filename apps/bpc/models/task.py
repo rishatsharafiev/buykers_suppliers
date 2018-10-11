@@ -8,7 +8,6 @@ class Task(models.Model):
     first_file = models.FileField(verbose_name='Первый файл(excel)')
     second_file = models.FileField(verbose_name='Второй файл(excel)')
     zip_file = models.FileField(verbose_name='Zip файл')
-    picture_path = models.FilePathField(verbose_name='Путь до изображений')
 
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now=True)
 
