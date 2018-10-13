@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "43b4ecf083171950cb297a09be0b8f097bc94b1cdb567797e628881e3fe42ddc"
+            "sha256": "58d1e6d6c36454451afbc78602022ba47b6bd4a7054c29be88bc6abe2d3c06fd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -99,6 +99,12 @@
             "index": "pypi",
             "version": "==0.2.0"
         },
+        "et-xmlfile": {
+            "hashes": [
+                "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"
+            ],
+            "version": "==1.0.1"
+        },
         "flake8": {
             "hashes": [
                 "sha256:7253265f7abd8b313e3892944044a365e3f4ac3fcdcfb4298f55ee9ddf188ba0",
@@ -137,6 +143,13 @@
             ],
             "version": "==1.20"
         },
+        "jdcal": {
+            "hashes": [
+                "sha256:948fb8d079e63b4be7a69dd5f0cd618a0a57e80753de8248fd786a8a20658a07",
+                "sha256:ea0a5067c5f0f50ad4c7bdc80abad3d976604f6fb026b0b3a17a9d84bb9046c9"
+            ],
+            "version": "==1.4"
+        },
         "kombu": {
             "hashes": [
                 "sha256:86adec6c60f63124e2082ea8481bbe4ebe04fde8ebed32c177c7f0cd2c1c9082",
@@ -158,6 +171,13 @@
                 "sha256:fcbfeaea0be121980e15bc97b3817b5202ca73d0eae185b4550cbfce2a3ebb3d"
             ],
             "version": "==4.3.0"
+        },
+        "openpyxl": {
+            "hashes": [
+                "sha256:22904d7bdfaaab33d65d50a0915a65eeb2f29c85d9ec53081563850678a29927"
+            ],
+            "index": "pypi",
+            "version": "==2.5.8"
         },
         "portend": {
             "hashes": [
