@@ -1,10 +1,11 @@
-import openpyxl
-import logging
 import decimal
-from django.contrib import admin
-from django.db import transaction
+import zipfile
 
+import openpyxl
 from conf import settings
+from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 from .inlines import GoodInline
 from ..models import Good
@@ -19,10 +20,20 @@ class TaskAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         """Save method"""
         super().save_model(request, obj, form, change)
+
+        # First file
         file_path = settings.MEDIA_ROOT / str(obj.first_file)
-        logging.error(file_path)
         workbook = openpyxl.load_workbook(filename=file_path, read_only=True)
         self.save_motos(obj, workbook)
+
+        # Second file
+        file_path = settings.MEDIA_ROOT / str(obj.second_file)
+        workbook = openpyxl.load_workbook(filename=file_path, read_only=True)
+        self.get_desctiption(workbook)
+
+        # Zip file
+        zip_file_path = settings.MEDIA_ROOT / str(obj.zip_file)
+        self.image_processing(zip_file_path)
 
     def save_motos(self, task, workbook):
         """Bicycles sheet parser"""
@@ -40,7 +51,7 @@ class TaskAdmin(admin.ModelAdmin):
                 nomenclature_group = row[3].value
                 brand = row[4].value
                 try:
-                    count = int(row[5].value)
+                    count = int(row[7].value)
                     wholesale_price = decimal.Decimal(row[8].value)
                     retail_price = decimal.Decimal(row[9].value)
                 except (ValueError, TypeError, decimal.InvalidOperation):
@@ -65,3 +76,26 @@ class TaskAdmin(admin.ModelAdmin):
                 )
 
                 good.save()
+
+    def get_desctiption(self, workbook):
+        """Get goods description"""
+        worksheet = workbook['balances']
+
+        with transaction.atomic():
+            for row in worksheet.iter_rows(row_offset=1):
+                try:
+                    good = Good.objects.get(code=row[0].value)
+                except ObjectDoesNotExist:
+                    continue
+
+                good.descriptions = row[7].value
+                good.save()
+
+    def image_processing(self, path):
+        """Image processing"""
+        if not zipfile.is_zipfile(path):
+            return
+
+        z = zipfile.ZipFile(path, 'r')
+        names = z.namelist()
+        return names
