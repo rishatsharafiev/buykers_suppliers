@@ -8,3 +8,4 @@ class GoodInline(admin.TabularInline):
 
     model = Good
     fields = ('code', 'vendor_code', 'wholesale_price', 'retail_price')
+    extra = 0

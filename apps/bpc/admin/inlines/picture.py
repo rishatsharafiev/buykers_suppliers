@@ -7,3 +7,4 @@ class PictureInline(admin.TabularInline):
     """Picture inline"""
 
     model = Picture
+    extra = 0

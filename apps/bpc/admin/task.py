@@ -27,7 +27,6 @@ class TaskAdmin(admin.ModelAdmin):
     def save_motos(self, task, workbook):
         """Bicycles sheet parser"""
         worksheet = workbook['Мотоэкипировка']
-        counter = 0
 
         genders = list(zip(*Good.GENDER_CHOICES))
         genders_indexes = genders[0]
@@ -52,7 +51,7 @@ class TaskAdmin(admin.ModelAdmin):
                 except ValueError:
                     gender = Good.GENDER_EMPTY_CHOICE
 
-                good = Good(
+                good, _ = Good.objects.get_or_create(
                     code=code,
                     vendor_code=vendor_code,
                     nomenclature=nomenclature,
@@ -62,7 +61,7 @@ class TaskAdmin(admin.ModelAdmin):
                     wholesale_price=wholesale_price,
                     retail_price=retail_price,
                     gender=gender,
-                    task=task,
+                    task=task
                 )
-                good.save()
 
+                good.save()
