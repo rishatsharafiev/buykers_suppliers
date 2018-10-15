@@ -1,6 +1,10 @@
 import openpyxl
-from decimal import Decimal
+import logging
+import decimal
 from django.contrib import admin
+from django.db import transaction
+
+from conf import settings
 
 from .inlines import GoodInline
 from ..models import Good
@@ -15,43 +19,38 @@ class TaskAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         """Save method"""
         super().save_model(request, obj, form, change)
+        file_path = settings.MEDIA_ROOT / str(obj.first_file)
+        logging.error(file_path)
+        workbook = openpyxl.load_workbook(filename=file_path, read_only=True)
+        self.save_motos(obj, workbook)
 
-        book = openpyxl.load_workbook(obj.first_file)
-        self.sheet_bicycles(book)
-
-    @staticmethod
-    def sheet_bicycles(book):
+    def save_motos(self, task, workbook):
         """Bicycles sheet parser"""
-        sheet = book.get_sheet_by_name('Мотоэкипировка')
-        row = 4
+        worksheet = workbook['Мотоэкипировка']
+        counter = 0
 
-        while sheet[f'A{row}'].value != '':
-            try:
-                count = int(sheet[f'H{row}'].value)
-            except ValueError:
-                continue
+        genders = list(zip(*Good.GENDER_CHOICES))
+        genders_indexes = genders[0]
+        genders_titles = genders[1]
 
-            if count:
-                code = sheet[f'A{row}'].value
-                vendor_code = sheet[f'B{row}'].value
-                nomenclature = sheet[f'C{row}'].value
-                nomenclature_group = sheet[f'D{row}'].value
-                brand = sheet[f'E{row}'].value
-                count = sheet[f'H{row}'].value
-
+        with transaction.atomic():
+            for row in worksheet.iter_rows(row_offset=3):
+                code = row[0].value
+                vendor_code = row[1].value
+                nomenclature = row[2].value
+                nomenclature_group = row[3].value
+                brand = row[4].value
                 try:
-                    wholesale_price = Decimal(sheet[f'I{row}'].value)
-                    retail_price = Decimal(sheet[f'J{row}'].value)
+                    count = int(row[5].value)
+                    wholesale_price = decimal.Decimal(row[8].value)
+                    retail_price = decimal.Decimal(row[9].value)
+                except (ValueError, TypeError, decimal.InvalidOperation):
+                    continue
+                try:
+                    gender_index = genders_titles.index(row[14].value)
+                    gender = genders_indexes[gender_index]
                 except ValueError:
-                    continue
-
-                gender_str = sheet[f'O{row}'].value
-                for g_c in Good.GENDER_CHOICES:
-                    if gender_str == g_c[1]:
-                        gender = g_c[0]
-                        break
-                else:
-                    continue
+                    gender = Good.GENDER_EMPTY_CHOICE
 
                 good = Good(
                     code=code,
@@ -62,8 +61,8 @@ class TaskAdmin(admin.ModelAdmin):
                     count=count,
                     wholesale_price=wholesale_price,
                     retail_price=retail_price,
-                    gender=gender
+                    gender=gender,
+                    task=task,
                 )
                 good.save()
 
-            row += 1
