@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 from .inlines import GoodInline
-from ..models import Good
+from ..models import Good, Picture
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -98,4 +98,19 @@ class TaskAdmin(admin.ModelAdmin):
 
         z = zipfile.ZipFile(path, 'r')
         names = z.namelist()
-        return names
+
+        for name in names:
+            with transaction.atomic():
+
+                # Name example: A04398_1.jpeg
+                code = name[:name.index('.')].split('_')[0]
+                try:
+                    good = Good.objects.get(code=code)
+                except ObjectDoesNotExist:
+                    continue
+
+                picture, _ = Picture.objects.get_or_create(
+                    name=settings.STATIC_ROOT / name,
+                    good=good
+                )
+                picture.save()
