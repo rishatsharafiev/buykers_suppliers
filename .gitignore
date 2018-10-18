@@ -96,6 +96,7 @@ ENV/
 .idea/
 
 static/
+!static/.gitkeep
 !apps/**/static/
 !apps/**/static/bpc/.gitkeep
 apps/**/static/bpc/*
