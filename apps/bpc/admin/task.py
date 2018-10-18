@@ -5,17 +5,17 @@ import openpyxl
 from conf import settings
 from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
-from .inlines import GoodInline
-from ..models import Good, Picture
+# from .inlines import GoodInline
+from ..models import Task, Good, Picture
 
 
 class TaskAdmin(admin.ModelAdmin):
     """Task admin"""
 
     exclude = ()
-    inlines = (GoodInline,)
+    # inlines = (GoodInline,)
 
     def save_model(self, request, obj, form, change):
         """Save method"""
@@ -43,39 +43,49 @@ class TaskAdmin(admin.ModelAdmin):
         genders_indexes = genders[0]
         genders_titles = genders[1]
 
-        with transaction.atomic():
-            for row in worksheet.iter_rows(row_offset=3):
-                code = row[0].value
-                vendor_code = row[1].value
-                nomenclature = row[2].value
-                nomenclature_group = row[3].value
-                brand = row[4].value
-                try:
-                    count = int(row[7].value)
-                    wholesale_price = decimal.Decimal(row[8].value)
-                    retail_price = decimal.Decimal(row[9].value)
-                except (ValueError, TypeError, decimal.InvalidOperation):
-                    continue
-                try:
-                    gender_index = genders_titles.index(row[14].value)
-                    gender = genders_indexes[gender_index]
-                except ValueError:
-                    gender = Good.GENDER_EMPTY_CHOICE
+        try:
+            task.status = Task.STATUS_CHOICE_PROGRESS
+            task.save()
+            with transaction.atomic():
+                for row in worksheet.iter_rows(row_offset=3):
+                    code = row[0].value
+                    vendor_code = row[1].value
+                    nomenclature = row[2].value
+                    nomenclature_group = row[3].value
+                    brand = row[4].value
+                    try:
+                        count = int(row[7].value)
+                        wholesale_price = decimal.Decimal(row[8].value)
+                        retail_price = decimal.Decimal(row[9].value)
+                    except (ValueError, TypeError, decimal.InvalidOperation):
+                        continue
+                    try:
+                        gender_index = genders_titles.index(row[14].value)
+                        gender = genders_indexes[gender_index]
+                    except ValueError:
+                        gender = Good.GENDER_EMPTY_CHOICE
 
-                good, _ = Good.objects.get_or_create(
-                    code=code,
-                    vendor_code=vendor_code,
-                    nomenclature=nomenclature,
-                    nomenclature_group=nomenclature_group,
-                    brand=brand,
-                    count=count,
-                    wholesale_price=wholesale_price,
-                    retail_price=retail_price,
-                    gender=gender,
-                    task=task
-                )
+                    good, _ = Good.objects.update_or_create(
+                        code=code,
+                        defaults={
+                            'vendor_code': vendor_code,
+                            'nomenclature': nomenclature,
+                            'nomenclature_group': nomenclature_group,
+                            'brand': brand,
+                            'count': count,
+                            'wholesale_price': wholesale_price,
+                            'retail_price': retail_price,
+                            'gender': gender,
+                            'task': task
+                        }
+                    )
 
-                good.save()
+                    good.save()
+            task.status = Task.STATUS_CHOICE_DONE
+        except IntegrityError:
+            task.status = Task.STATUS_CHOICE_ERROR
+        finally:
+            task.save()
 
     def get_desctiption(self, workbook):
         """Get goods description"""
