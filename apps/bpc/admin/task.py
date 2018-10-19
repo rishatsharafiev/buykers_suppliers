@@ -5,10 +5,10 @@ import openpyxl
 from conf import settings
 from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, transaction
 
 # from .inlines import GoodInline
-from ..models import Task, Good, Picture
+from ..models import Good, Picture, Task
 
 
 class TaskAdmin(admin.ModelAdmin):
