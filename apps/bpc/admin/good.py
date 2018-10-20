@@ -64,52 +64,53 @@ class GoodAdmin(admin.ModelAdmin):
             'Изображения',
         ))
 
-        for obj in queryset:
-            pictures = Picture.objects.filter(good=obj)
-            size = obj.vendor_code.split('-')[-1]
+        for good in queryset:
+            pictures = Picture.objects.filter(good=good)
+            size = good.vendor_code.split('-')[-1]
 
             # Size
             t = re.compile(r'([\w\d/]+)$')
-            v_code_name = t.search(obj.vendor_code).group(0) if t.search(obj.vendor_code).group(0) else ''
+            v_code_name = t.search(good.vendor_code).group(0) if t.search(good.vendor_code).group(0) else ''
 
             # link
-            tr = transliterate.translit(obj.nomenclature.replace('(', '').replace(')', ''), reversed=True)
+            tr = transliterate.translit(good.nomenclature.replace('(', '').replace(')', ''), reversed=True)
             link = '-'.join([w for w in tr.split()])
+            link = f'link-{good.vendor_code}'
 
             # Gender
             genders = list(zip(*Good.GENDER_CHOICES))
             genders_indexes = genders[0]
             genders_titles = genders[1]
-            t_index = genders_indexes.index(obj.gender)
+            t_index = genders_indexes.index(good.gender)
             gender = genders_titles[t_index]
 
             writer.writerow((
-                obj.nomenclature,
+                good.nomenclature,
                 v_code_name,
-                obj.vendor_code,
+                good.vendor_code,
                 'RUB',  # Можно парсить из второго файла, в бд пока не предусмотренно
-                obj.retail_price,
+                good.retail_price,
                 '1',
                 '',
-                obj.wholesale_price,
+                good.wholesale_price,
                 '',
                 '',
                 '',
-                f'Купить {obj.nomenclature}',
-                obj.descriptions,
+                f'Купить {good.nomenclature}',
+                good.descriptions,
                 '',
                 '1',
                 '',
                 '',
                 '',
-                obj.nomenclature,
-                ', '.join([a for a in obj.nomenclature.split()[:-1]]),
-                f'Купить {obj.nomenclature}',
+                good.nomenclature,
+                ', '.join([a for a in good.nomenclature.split()[:-1]]),
+                f'Купить {good.nomenclature}',
                 link,  # Ссылка на ветрину
                 '',
                 '',
-                obj.brand.lower(),
-                obj.brand.lower(),
+                good.brand.lower(),
+                good.brand.lower(),
                 '',
                 '',
                 '',
