@@ -48,7 +48,7 @@ class TaskAdmin(admin.ModelAdmin):
             task.save()
             with transaction.atomic():
                 for row in worksheet.iter_rows(row_offset=3):
-                    code = row[0].value
+                    code = str(row[0].value).strip()
                     vendor_code = row[1].value
                     nomenclature = row[2].value
                     nomenclature_group = row[3].value
@@ -108,12 +108,11 @@ class TaskAdmin(admin.ModelAdmin):
 
         z = zipfile.ZipFile(path, 'r')
         names = z.namelist()
-
         for name in names:
             with transaction.atomic():
 
                 # Name example: A04398_1.jpeg
-                code = name[:name.index('.')].split('_')[0]
+                code = name[:name.index('.')].split('_')[0].strip()
                 try:
                     good = Good.objects.get(code=code)
                 except ObjectDoesNotExist:

@@ -1,9 +1,12 @@
 import csv
+import re
 
+import transliterate
 from django.contrib import admin
 from django.http import HttpResponse
 
 from .inlines import PictureInline
+from ..models import Good, Picture
 
 
 class GoodAdmin(admin.ModelAdmin):
@@ -23,7 +26,7 @@ class GoodAdmin(admin.ModelAdmin):
             'Код артикула',
             'Валюта',
             'Цена',
-            'Дотупен для заказа',
+            'Доступен для заказа',
             'Зачеркнутая цена',
             'Закупоная цена',
             'В наличии @шоу-рум в Москве (в наличии)',
@@ -42,11 +45,11 @@ class GoodAdmin(admin.ModelAdmin):
             'Ссылка на ветрину',
             'Адрес видео на YouTube или Vimeo',
             'Дополнительные параметры',
-            'Произовдитель',
+            'Производитель',
             'Бренд',
             'Подходящие модели автомобилей',
             'Вес',
-            'Страна происхждения',
+            'Страна происхождения',
             'Пол',
             'Цвет',
             'Материал',
@@ -62,57 +65,66 @@ class GoodAdmin(admin.ModelAdmin):
         ))
 
         for obj in queryset:
+            pictures = Picture.objects.filter(good=obj)
             size = obj.vendor_code.split('-')[-1]
-            description = f"""
-            <p><del></del>{obj.descriptions.split()[0]}</p>
 
-            <p>ОСОБЕННОСТИ</p>
+            # Size
+            t = re.compile(r'([\w\d/]+)$')
+            v_code_name = t.search(obj.vendor_code).group(0) if t.search(obj.vendor_code).group(0) else ''
 
-            <p>{obj.descriptions.split()[-1]}<del></del></p>
-            """
+            # link
+            tr = transliterate.translit(obj.nomenclature.replace('(', '').replace(')', ''), reversed=True)
+            link = '-'.join([w for w in tr.split()])
+
+            # Gender
+            genders = list(zip(*Good.GENDER_CHOICES))
+            genders_indexes = genders[0]
+            genders_titles = genders[1]
+            t_index = genders_indexes.index(obj.gender)
+            gender = genders_titles[t_index]
 
             writer.writerow((
                 obj.nomenclature,
-                'Наименование артикула',
+                v_code_name,
                 obj.vendor_code,
-                'Валюта',
+                'RUB',  # Можно парсить из второго файла, в бд пока не предусмотренно
                 obj.retail_price,
-                'Дотупен для заказа',
-                'Зачеркнутая цена',
+                '1',
+                '',
                 obj.wholesale_price,
-                'В наличии @шоу-рум в Москве (в наличии)',
-                'В наличии @склад в Москве (1-2 дня)',
-                'В наличии @cклад в Европе (около 10 дней)',
+                '',
+                '',
+                '',
                 f'Купить {obj.nomenclature}',
-                description,
-                'Наклейка',
-                'Статус',
-                'Тип товара',
-                'Теги',
-                'Облагается налогом',
-                'Заголовок',
-                'META Keywords',
-                'META Description',
-                'Ссылка на ветрину',
-                'Адрес видео на YouTube или Vimeo',
-                'Дополнительные параметры',
+                obj.descriptions,
+                '',
+                '1',
+                '',
+                '',
+                '',
+                obj.nomenclature,
+                ', '.join([a for a in obj.nomenclature.split()[:-1]]),
+                f'Купить {obj.nomenclature}',
+                link,  # Ссылка на ветрину
+                '',
+                '',
                 obj.brand.lower(),
                 obj.brand.lower(),
-                'Подходящие модели автомобилей',
-                'Вес',
-                'Страна происхждения',
-                obj.gender,
-                'Цвет',
-                'Материал',
-                'Материал подошвы',
-                'Уровень',
-                'Максимальный вес пользователя',
+                '',
+                '',
+                '',
+                gender,
+                '',
+                '',
+                '',
+                '',
+                '',
                 size,
-                'Изображения',
-                'Изображения',
-                'Изображения',
-                'Изображения',
-                'Изображения',
+                pictures.get(name__contains='_1') if pictures.filter(name__contains='_1') else '',
+                pictures.get(name__contains='_2') if pictures.filter(name__contains='_1') else '',
+                pictures.get(name__contains='_3') if pictures.filter(name__contains='_1') else '',
+                pictures.get(name__contains='_4') if pictures.filter(name__contains='_1') else '',
+                pictures.get(name__contains='_5') if pictures.filter(name__contains='_1') else '',
             ))
 
         return response
