@@ -17,10 +17,10 @@ RUN apk add --update --no-cache --virtual .build-deps \
 	shadow python3-dev libc-dev libc6-compat zlib-dev libffi-dev ca-certificates
 
 # update pip
-RUN pip install --upgrade pip
+RUN pip install pip==18.0
 
 # install pipenv
-RUN pip3 install --upgrade pipenv
+RUN pip3 install pipenv==2018.7.1
 
 # install apk
 RUN apk add --update --no-cache postgresql-dev gcc musl-dev make libxslt-dev

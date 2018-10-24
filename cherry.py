@@ -29,7 +29,9 @@ server = cherrypy._cpserver.Server()
 # Configure the server object
 server.socket_host = "0.0.0.0"
 server.socket_port = 5000
+server.socket_timeout = 500
 server.thread_pool = 30
+server.max_request_body_size = 0
 
 # Subscribe this server
 server.subscribe()

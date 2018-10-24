@@ -18,6 +18,8 @@ django-celery-results = "==1.0.1"
 django-celery-monitor = "==1.1.2"
 raven = "==6.9.0"
 pip = "==18.0"
+openpyxl = "==2.5.8"
+transliterate = "==1.10.2"
 
 [dev-packages]
 

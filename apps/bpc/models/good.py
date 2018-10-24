@@ -8,9 +8,16 @@ class Good(models.Model):
 
     GENDER_MAN_CHOICE = 0
     GENDER_WOMAN_CHOICE = 1
+    GENDER_CHILD_CHOICE = 2
+    GENDER_TEEN_CHOICE = 3
+    GENDER_EMPTY_CHOICE = 4
+
     GENDER_CHOICES = (
         (GENDER_MAN_CHOICE, 'Мужской'),
         (GENDER_WOMAN_CHOICE, 'Женский'),
+        (GENDER_CHILD_CHOICE, 'Детский'),
+        (GENDER_TEEN_CHOICE, 'Подростковый'),
+        (GENDER_EMPTY_CHOICE, '')
     )
 
     nomenclature = models.CharField(verbose_name='Номенклатура', max_length=255)
