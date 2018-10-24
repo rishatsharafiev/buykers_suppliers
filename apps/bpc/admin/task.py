@@ -9,7 +9,7 @@ from django.db import IntegrityError, transaction
 
 # from .inlines import GoodInline
 from ..models import Good, Picture, Task
-
+import logging
 
 class TaskAdmin(admin.ModelAdmin):
     """Task admin"""
@@ -53,11 +53,19 @@ class TaskAdmin(admin.ModelAdmin):
                     nomenclature = row[2].value
                     nomenclature_group = row[3].value
                     brand = row[4].value
+                    if row[4].value == 1:
+                        brand = '100%'
                     try:
-                        count = int(row[7].value)
+                        if str(row[7].value).strip() == 'в наличии':
+                            count = 1
+                        else:
+                            count = int(row[7].value)
+                    except TypeError:
+                        continue
+                    try:
                         wholesale_price = decimal.Decimal(row[8].value)
                         retail_price = decimal.Decimal(row[9].value)
-                    except (ValueError, TypeError, decimal.InvalidOperation):
+                    except (TypeError, decimal.InvalidOperation):
                         continue
                     try:
                         gender_index = genders_titles.index(row[14].value)
@@ -94,12 +102,11 @@ class TaskAdmin(admin.ModelAdmin):
         with transaction.atomic():
             for row in worksheet.iter_rows(row_offset=1):
                 try:
-                    good = Good.objects.get(code=row[0].value)
-                except ObjectDoesNotExist:
-                    continue
-
-                good.descriptions = row[7].value
-                good.save()
+                    good = Good.objects.get(code=str(row[0].value).strip())
+                    good.descriptions = row[7].value
+                    good.save()
+                except ObjectDoesNotExist as err:
+                    logging.warning(str(err))
 
     def image_processing(self, path):
         """Image processing"""
@@ -119,7 +126,7 @@ class TaskAdmin(admin.ModelAdmin):
                     continue
 
                 picture, _ = Picture.objects.get_or_create(
-                    name=settings.STATIC_ROOT / name,
+                    name=f'{good.task.static_path}/{name}',
                     good=good
                 )
                 picture.save()

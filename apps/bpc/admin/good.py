@@ -6,21 +6,22 @@ from django.contrib import admin
 from django.http import HttpResponse
 
 from .inlines import PictureInline
-from ..models import Good, Picture
+from ..models import Good
 
 
 class GoodAdmin(admin.ModelAdmin):
     """Good admin"""
 
-    def export_as_csv(self, request, queryset):
+    def export_as_csv(self, request, goods):
         """Export csv file"""
         meta = self.model._meta
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-        writer = csv.writer(response)
+        csv_writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL, lineterminator='\n')
 
-        writer.writerow((
+        # заголовок
+        col_names = [
             'Наименование',
             'Наименование артикула',
             'Код артикула',
@@ -28,7 +29,9 @@ class GoodAdmin(admin.ModelAdmin):
             'Цена',
             'Доступен для заказа',
             'Зачеркнутая цена',
-            'Закупоная цена',
+            'Закупочная цена',
+            'В наличии',
+            'Основной артикул',
             'В наличии @шоу-рум в Москве (в наличии)',
             'В наличии @склад в Москве (1-2 дня)',
             'В наличии @cклад в Европе (около 10 дней)',
@@ -36,13 +39,13 @@ class GoodAdmin(admin.ModelAdmin):
             'Описание',
             'Наклейка',
             'Статус',
-            'Тип товара',
+            'Тип товаров',
             'Теги',
             'Облагается налогом',
             'Заголовок',
             'META Keywords',
             'META Description',
-            'Ссылка на ветрину',
+            'Ссылка на витрину',
             'Адрес видео на YouTube или Vimeo',
             'Дополнительные параметры',
             'Производитель',
@@ -62,37 +65,46 @@ class GoodAdmin(admin.ModelAdmin):
             'Изображения',
             'Изображения',
             'Изображения',
-        ))
+        ]
 
-        for good in queryset:
-            pictures = Picture.objects.filter(good=good)
-            size = good.vendor_code.split('-')[-1]
+        csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            # Size
-            t = re.compile(r'([\w\d/]+)$')
-            v_code_name = t.search(good.vendor_code).group(0) if t.search(good.vendor_code).group(0) else ''
+        for good in goods:
+            # size = good.vendor_code.split('-')[-1]
+            #
+            # # Size
+            # t = re.compile(r'([\w\d/]+)$')
+            # v_code_name = t.search(good.vendor_code).group(0) if t.search(good.vendor_code).group(0) else ''
 
             # link
             tr = transliterate.translit(good.nomenclature.replace('(', '').replace(')', ''), reversed=True)
             link = '-'.join([w for w in tr.split()])
-            link = f'link-{good.vendor_code}'
 
             # Gender
             genders = list(zip(*Good.GENDER_CHOICES))
-            genders_indexes = genders[0]
             genders_titles = genders[1]
-            t_index = genders_indexes.index(good.gender)
-            gender = genders_titles[t_index]
+            try:
 
-            writer.writerow((
+                if good.gender == Good.GENDER_TEEN_CHOICE:
+                    gender = genders_titles[Good.GENDER_CHILD_CHOICE]
+                else:
+                    gender = genders_titles[good.gender]
+            except ValueError:
+                gender = ''
+
+            pictures = good.picture_set.all()[:5]
+
+            items = [
                 good.nomenclature,
-                v_code_name,
+                '',
                 good.vendor_code,
-                'RUB',  # Можно парсить из второго файла, в бд пока не предусмотренно
+                'RUB',
                 good.retail_price,
                 '1',
-                '',
+                '0',
                 good.wholesale_price,
+                '1',
+                '',
                 '',
                 '',
                 '',
@@ -120,13 +132,99 @@ class GoodAdmin(admin.ModelAdmin):
                 '',
                 '',
                 '',
-                size,
-                pictures.get(name__contains='_1') if pictures.filter(name__contains='_1') else '',
-                pictures.get(name__contains='_2') if pictures.filter(name__contains='_1') else '',
-                pictures.get(name__contains='_3') if pictures.filter(name__contains='_1') else '',
-                pictures.get(name__contains='_4') if pictures.filter(name__contains='_1') else '',
-                pictures.get(name__contains='_5') if pictures.filter(name__contains='_1') else '',
-            ))
+                '<{один размер}>',
+            ]
+            items.extend([f'{good.task.static_path}/{picture.name}' for picture in pictures])
+
+            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in items])
+
+            items = [
+                good.nomenclature,
+                '',
+                good.vendor_code,
+                'RUB',
+                good.retail_price,
+                '1',
+                '0',
+                good.wholesale_price,
+                '1',
+                '1',
+                '0',
+                '1',
+                '0',
+                f'Купить {good.nomenclature}',
+                good.descriptions,
+                '',
+                '1',
+                '',
+                '',
+                '',
+                good.nomenclature,
+                ', '.join([a for a in good.nomenclature.split()[:-1]]),
+                f'Купить {good.nomenclature}',
+                link,  # Ссылка на ветрину
+                '',
+                '',
+                good.brand.lower(),
+                good.brand.lower(),
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                'один размер',
+            ]
+            items.extend([f'{good.task.static_path}/{picture.name}' for picture in pictures])
+
+            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in items])
+
+            # write ending row
+            col_names = [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
         return response
 
@@ -136,5 +234,5 @@ class GoodAdmin(admin.ModelAdmin):
     actions = (export_as_csv,)
     exclude = ()
     list_filter = ('task', 'nomenclature_group', 'brand', 'gender')
-    list_display = ('task', 'code', 'vendor_code', 'nomenclature_group', 'brand', 'wholesale_price', 'retail_price')
+    list_display = ('code', 'task', 'vendor_code', 'nomenclature_group', 'brand', 'wholesale_price', 'retail_price')
     inlines = (PictureInline,)

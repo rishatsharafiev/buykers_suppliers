@@ -26,6 +26,9 @@ class Task(models.Model):
     )
 
     name = models.CharField(verbose_name='Название', max_length=128)
+    static_path = models.CharField(verbose_name='Путь до папки с изображениями',
+                                   max_length=255,
+                                   default='/wa-data/public/site/import')
     first_file = models.FileField(verbose_name='Первый файл(xlsx)', upload_to=get_file_path)
     second_file = models.FileField(verbose_name='Второй файл(xlsx)', upload_to=get_file_path)
     zip_file = models.FileField(verbose_name='Zip файл', upload_to=get_file_path)
