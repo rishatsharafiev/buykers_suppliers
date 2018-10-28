@@ -136,7 +136,7 @@ class GoodAdmin(admin.ModelAdmin):
             ]
             items.extend([f'{good.task.static_path}/{picture.name}' for picture in pictures])
 
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in items])
+            csv_writer.writerow([item for item in items])
 
             items = [
                 good.nomenclature,
@@ -180,7 +180,7 @@ class GoodAdmin(admin.ModelAdmin):
             ]
             items.extend([f'{good.task.static_path}/{picture.name}' for picture in pictures])
 
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in items])
+            csv_writer.writerow([item for item in items])
 
             # write ending row
             col_names = [
