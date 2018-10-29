@@ -126,7 +126,7 @@ class TaskAdmin(admin.ModelAdmin):
                     continue
 
                 picture, _ = Picture.objects.get_or_create(
-                    name=f'{good.task.static_path}/{name}',
+                    name=name,
                     good=good
                 )
                 picture.save()
