@@ -47,6 +47,10 @@ class TaskAdmin(admin.ModelAdmin):
             task.status = Task.STATUS_CHOICE_PROGRESS
             task.save()
             with transaction.atomic():
+                # remove objects
+                Good.objects.all().delete()
+
+                # write objects
                 for row in worksheet.iter_rows(row_offset=3):
                     code = str(row[0].value).strip()
                     vendor_code = row[1].value
@@ -55,6 +59,11 @@ class TaskAdmin(admin.ModelAdmin):
                     brand = row[4].value
                     if row[4].value == 1:
                         brand = '100%'
+
+                    status = str(row[6].value)
+                    if status.strip() == 'Ожидается':
+                        continue
+
                     try:
                         if str(row[7].value).strip() == 'в наличии':
                             count = 1
