@@ -70,6 +70,8 @@ class GoodAdmin(admin.ModelAdmin):
         csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
         for good in goods:
+            if good.count <= 0:
+                continue
             # size = good.vendor_code.split('-')[-1]
             #
             # # Size
@@ -78,7 +80,7 @@ class GoodAdmin(admin.ModelAdmin):
 
             # link
             tr = transliterate.translit(good.nomenclature.replace('(', '').replace(')', ''), reversed=True)
-            link = '-'.join([w for w in tr.split()])
+            link = '-'.join([w for w in tr.split()]).replace('/', '-')
 
             # Gender
             genders = list(zip(*Good.GENDER_CHOICES))
@@ -100,10 +102,10 @@ class GoodAdmin(admin.ModelAdmin):
                 good.vendor_code,
                 'RUB',
                 str(good.retail_price).replace('.', ','),
-                '1',
+                good.count,
                 '0',
                 str(good.wholesale_price).replace('.', ','),
-                '1',
+                good.count,
                 '',
                 '',
                 '',
@@ -144,10 +146,10 @@ class GoodAdmin(admin.ModelAdmin):
                 good.vendor_code,
                 'RUB',
                 str(good.retail_price).replace('.', ','),
-                '1',
+                good.count,
                 '0',
                 str(good.wholesale_price).replace('.', ','),
-                '1',
+                good.count,
                 '1',
                 '0',
                 '1',
