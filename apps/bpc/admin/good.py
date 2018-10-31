@@ -152,7 +152,7 @@ class GoodAdmin(admin.ModelAdmin):
                 good.count,
                 '1',
                 '0',
-                '1',
+                good.count,
                 '0',
                 f'Купить {good.nomenclature}',
                 good.descriptions,
