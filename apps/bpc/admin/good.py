@@ -142,7 +142,7 @@ class GoodAdmin(admin.ModelAdmin):
 
             items = [
                 good.nomenclature,
-                '',
+                'один размер',
                 good.vendor_code,
                 'RUB',
                 str(good.retail_price).replace('.', ','),
@@ -150,7 +150,7 @@ class GoodAdmin(admin.ModelAdmin):
                 '0',
                 str(good.wholesale_price).replace('.', ','),
                 good.count,
-                'один размер',
+                '1',
                 '0',
                 good.count,
                 '0',
