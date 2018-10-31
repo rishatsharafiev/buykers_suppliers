@@ -150,7 +150,7 @@ class GoodAdmin(admin.ModelAdmin):
                 '0',
                 str(good.wholesale_price).replace('.', ','),
                 good.count,
-                '1',
+                'один размер',
                 '0',
                 good.count,
                 '0',
