@@ -95,12 +95,12 @@ ENV/
 # InetlliJ platform
 .idea/
 
-# static/
+static/
 # !static/.gitkeep
 # !apps/**/static/
 # !apps/**/static/bpc/.gitkeep
 # apps/**/static/bpc/*
-# media/
+media/
 # !apps/**/media/
 
 !apps/*
