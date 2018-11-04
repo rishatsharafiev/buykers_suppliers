@@ -2,6 +2,9 @@ FROM nginx:alpine
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
+# Set timezone
+RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
+
 COPY nginx.conf /etc/nginx/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

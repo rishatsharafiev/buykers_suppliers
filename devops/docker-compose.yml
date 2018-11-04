@@ -6,26 +6,49 @@ networks:
 volumes:
   postgres:
     driver: ${VOLUMES_DRIVER}
-  redis:
-    driver: ${VOLUMES_DRIVER}
-  app:
-    driver: ${VOLUMES_DRIVER}
-  nginx:
+  redis_queue:
     driver: ${VOLUMES_DRIVER}
   portainer:
     driver: ${VOLUMES_DRIVER}
+  nginx_log:
+    driver: ${VOLUMES_DRIVER}
+  app_log:
+    driver: ${VOLUMES_DRIVER}
+  beat_log:
+    driver: ${VOLUMES_DRIVER}
+  worker_log:
+    driver: ${VOLUMES_DRIVER}
 
 services:
+### NGINX Server #########################################
+  nginx:
+    build:
+      context: ./nginx
+      args:
+      - APP_UPSTREAM_CONTAINER=${APP_UPSTREAM_CONTAINER}
+      - APP_UPSTREAM_PORT=${APP_UPSTREAM_PORT}
+    volumes:
+    - nginx_log:/var/log
+    - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
+    - ${APP_PATH}/static:/app/static
+    - ${APP_PATH}/media:/app/media
+    ports:
+    - "${NGINX_HOST_HTTP_PORT}:80"
+    - "${NGINX_HOST_HTTPS_PORT}:443"
+    depends_on:
+    - app
+    networks:
+    - backend
 ### Backend Server #########################################
   app:
     build:
       context: ../
       dockerfile: devops/app/Dockerfile
     volumes:
-      - app:/var/log
+      - app_log:/var/log
       - ${APP_PATH}:/app
     ports:
-      - "${APP_SUPERUSER_PORT}:9001"
+      - ${APP_SUPERUSER_PORT}:9001
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -36,27 +59,6 @@ services:
       - backend
     depends_on:
       - postgres
-      - redis
-
-### NGINX Server #########################################
-  nginx:
-    build:
-      context: ./nginx
-      args:
-        - APP_UPSTREAM_CONTAINER=${APP_UPSTREAM_CONTAINER}
-        - APP_UPSTREAM_PORT=${APP_UPSTREAM_PORT}
-    volumes:
-      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
-      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
-      - ${APP_PATH}/static:/app/static
-      - ${APP_PATH}/media:/app/media
-    ports:
-      - "${NGINX_HOST_HTTP_PORT}:80"
-      - "${NGINX_HOST_HTTPS_PORT}:443"
-    depends_on:
-      - app
-    networks:
-      - backend
 
 ### PostgreSQL ###########################################
   postgres:
@@ -72,27 +74,11 @@ services:
     networks:
       - backend
 
-### Redis ################################################
-  redis:
-    build: ./redis
+### Redis queue ################################################
+  redis_queue:
+    build: ./redis_queue
     volumes:
-      - redis:/data
-#    ports:
-#      - "${POSTGRES_PORT}:5432"
-    networks:
-      - backend
-
-### Celery worker #########################################
-  worker:
-    build:
-      context: ../
-      dockerfile: devops/worker/Dockerfile
-    volumes:
-      - app:/var/log
-      - ${APP_PATH}:/app
-    depends_on:
-      - redis
-      - app
+      - redis_queue:/data
     networks:
       - backend
 
@@ -102,26 +88,29 @@ services:
       context: ../
       dockerfile: devops/beat/Dockerfile
     volumes:
-      - app:/var/log
+      - beat_log:/var/log
       - ${APP_PATH}:/app
+    ports:
+      - ${BEAT_SUPERUSER_PORT}:9001
     depends_on:
-      - redis
+      - redis_queue
       - app
     networks:
       - backend
 
-### Celery camera #########################################
-  camera:
+### Celery worker #########################################
+  worker:
     build:
       context: ../
-      dockerfile: devops/camera/Dockerfile
+      dockerfile: devops/worker/Dockerfile
     volumes:
-      - app:/var/log
+      - worker_log:/var/log
       - ${APP_PATH}:/app
+    ports:
+      - ${WORKER_SUPERUSER_PORT}:9001
     depends_on:
-      - redis
-      - beat
-      - worker
+      - redis_queue
+      - app
     networks:
       - backend
 

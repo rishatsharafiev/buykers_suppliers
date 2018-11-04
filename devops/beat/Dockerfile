@@ -2,6 +2,9 @@ FROM python:3.6-alpine
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
+# Set timezone
+RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
+
 # create app path
 RUN mkdir -p /app
 WORKDIR /app
@@ -29,6 +32,13 @@ RUN apk add --update --no-cache postgresql-dev gcc musl-dev make libxslt-dev
 RUN apk del .build-deps && \
 	rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
+### supervisor
+EXPOSE 9001
+RUN apk update && apk add git
+RUN pip install git+https://github.com/Supervisor/supervisor # supervisor with support python 3
+ADD ./devops/beat/supervisor /etc/supervisor
+RUN mkdir /var/log/supervisor
+
 # copy application code
 ADD . /app
 RUN chown -R app:app /app
@@ -36,8 +46,5 @@ RUN chown -R app:app /app
 # install packages
 RUN pipenv install --deploy --system # --skip-lock
 
-# use user
-USER app
-
 # Run celery
-ENTRYPOINT celery -A conf beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisor/supervisord.conf"]

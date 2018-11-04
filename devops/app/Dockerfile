@@ -2,6 +2,9 @@ FROM python:3.6-alpine
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
+# Set timezone
+RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
+
 # create app path
 RUN mkdir -p /app
 WORKDIR /app
@@ -36,9 +39,9 @@ RUN pip install git+https://github.com/Supervisor/supervisor # supervisor with s
 ADD ./devops/app/supervisor /etc/supervisor
 RUN mkdir /var/log/supervisor
 
-# install application
-COPY ./ /app
-WORKDIR /app
+# copy application code
+ADD . /app
+RUN chown -R app:app /app
 
 # install packages
 RUN pipenv install --deploy --system # --skip-lock
