@@ -284,7 +284,7 @@ beat_schedule = {
     },
 }
 beat_scheduler = 'django_celery_beat.schedulers:DatabaseScheduler'
-beat_schedule_filename = BASE_PATH / 'tmp' / 'celerybeat-schedule'
+beat_schedule_filename = 'celerybeat-schedule'
 beat_sync_every = 0
 beat_max_loop_interval = 300
 

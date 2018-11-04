@@ -1,10 +1,10 @@
-FROM postgres:10.5-alpine
+FROM redis:5.0-rc-alpine3.8
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
 # Set timezone
 RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
 
-CMD ["postgres"]
+CMD ["redis-server"]
 
-EXPOSE 5432
+EXPOSE 6379

@@ -96,12 +96,12 @@ ENV/
 .idea/
 
 static/
-!static/.gitkeep
-!apps/**/static/
-!apps/**/static/bpc/.gitkeep
-apps/**/static/bpc/*
+# !static/.gitkeep
+# !apps/**/static/
+# !apps/**/static/bpc/.gitkeep
+# apps/**/static/bpc/*
 media/
-!apps/**/media/
+# !apps/**/media/
 
 !apps/*
 .DS_Store
