@@ -3,7 +3,7 @@ FROM python:3.6-alpine
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
 # Set timezone
-RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
+# RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
 
 # create app path
 RUN mkdir -p /app
@@ -36,7 +36,7 @@ RUN apk del .build-deps && \
 EXPOSE 9001
 RUN apk update && apk add git
 RUN pip install git+https://github.com/Supervisor/supervisor # supervisor with support python 3
-ADD ./devops/beat/supervisor /etc/supervisor
+ADD ./devops/celery/supervisor /etc/supervisor
 RUN mkdir /var/log/supervisor
 
 # copy application code
