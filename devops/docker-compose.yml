@@ -38,7 +38,6 @@ services:
       - backend
     depends_on:
       - postgres
-      - selenoid
 
 ### Celery #########################################
   celery:
@@ -96,27 +95,6 @@ services:
     build: ./redis_queue
     volumes:
       - redis_queue:/data
-    networks:
-      - backend
-
-### Selenoid ################################################
-  selenoid:
-    build: ./selenoid
-    ports:
-      - "${SELENOID_PORT}:4444"
-    volumes:
-      - "$PWD/selenoid:/etc/selenoid/"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    networks:
-      - backend
-
-### Selenoid UI ################################################
-  selenoid-ui:
-    build: ./selenoid-ui
-    ports:
-      - "${SELENOID_UI_PORT}:8080"
-    depends_on:
-      - selenoid
     networks:
       - backend
 
