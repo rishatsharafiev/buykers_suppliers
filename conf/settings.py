@@ -48,7 +48,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.bpc'
+    'apps.book'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -145,17 +145,17 @@ MEDIA_ROOT = BASE_PATH / 'media'
 
 ### Celery
 # General settings
-accept_content = ['application/json']
-enable_utc = False
-timezone = 'Europe/Moscow'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TIMEZONE = 'UTC'  # 'Europe/Moscow'
+CELERY_ENABLE_UTC = True  # False
 
 # Task settings
-task_annotations = {'*': {'rate_limit': '10/s'}}
-task_compression = 'gzip'
-task_protocol = 2
-task_serializer = 'json'
-task_publish_retry = True
-task_publish_retry_policy = {
+CELERY_TASK_ANNOTATIONS = {'*': {'rate_limit': '10/s'}}
+CELERY_TASK_COMPRESSION = 'gzip'
+CELERY_TASK_PROTOCOL = 2
+CELERY_task_serializer = 'json'
+CELERY_task_publish_retry = True
+CELERY_task_publish_retry_policy = {
     'max_retries': 3,
     'interval_start': 0,
     'interval_step': 0.2,
@@ -163,130 +163,132 @@ task_publish_retry_policy = {
 }
 
 # Task execution settings
-task_always_eager = False
-task_eager_propagates = False
-task_remote_tracebacks = False
-task_ignore_result = True
-task_store_errors_even_if_ignored = False
-task_track_started = False
-task_time_limit = int(datetime.timedelta(days=1).total_seconds())
-# task_soft_time_limit = None
-task_acks_late = False
-task_reject_on_worker_lost = False
-# task_default_rate_limit = '1000/m'
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_TASK_EAGER_PROPAGATES = False
+CELERY_TASK_REMOTE_TRACEBACKS = False
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_TASK_STORE_ERRORS_EVEN_IF_IGNORED = False
+CELERY_TASK_TRACK_STARTED = False
+CELERY_TASK_TIME_LIMIT = int(datetime.timedelta(days=1).total_seconds())
+# CELERY_TASK_SOFT_TIME_LIMIT = None
+CELERY_TASK_ACKS_LATE = False
+CELERY_TASK_REJECT_ON_WORKER_LOST = False
+# CELERY_TASK_DEFAULT_RATE_LIMIT = '1000/m'
 
 # Task result backend settings
-result_backend = env('CELERY_RESULT_BACKEND', cast=str, default='django-db') # django-db | redis://localhost
-result_backend_transport_options = {'visibility_timeout': 18000}
-result_serializer = 'json'
-result_compression = 'gzip'
-result_expires = int(datetime.timedelta(days=1).total_seconds())
-result_cache_max = False
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', cast=str, default='django-db') # django-db | redis://localhost
+CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS = {'visibility_timeout': 18000}
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_COMPRESSION = 'gzip'
+CELERY_RESULT_EXPIRES = int(datetime.timedelta(days=1).total_seconds())
+CELERY_RESULT_CACHE_MAX = False
 
 # Redis backend setting
-redis_backend_use_ssl = False
-# redis_max_connections = None
-# redis_socket_connect_timeout = None
-redis_socket_timeout = 120.0
+CELERY_REDIS_BACKEND_USE_SSL = False
+# CELERY_REDIS_MAX_CONNECTIONS = None
+# CELERY_REDIS_SOCKET_CONNECT_TIMEOUT = None
+CELERY_REDIS_SOCKET_TIMEOUT = 120.0
 
 # Message Routing
 from kombu import Queue, Exchange
-task_queues = {
-    Queue(name='celery', exchange=Exchange('celery'), routing_key='celery', durable=True),
-    Queue(name='high', exchange=Exchange('default'), routing_key='high', durable=True),
-    Queue(name='normal', exchange=Exchange('default'), routing_key='normal', durable=True),
-    Queue(name='low', exchange=Exchange('default'), routing_key='low', durable=True),
-}
-task_routes = {
-    'apps.book.tasks.hello_periodic': {'queue': 'low'},
-}
-task_queue_ha_policy = {'all'} # RabbitMQ
-task_queue_max_priority = None # RabbitMQ
-# worker_direct = False
-task_create_missing_queues = True
-task_default_queue = 'celery'
-task_default_exchange = 'celery'
-task_default_exchange_type = 'direct'
-task_default_routing_key = 'celery'
-task_default_delivery_mode = 'persistent'
+# CELERY_TASK_QUEUES = {
+#     Queue(name='celery', exchange=Exchange('celery'), routing_key='celery.#', durable=True),
+#     Queue(name='high', exchange=Exchange('high'), routing_key='high.#', durable=True),
+#     Queue(name='normal', exchange=Exchange('normal'), routing_key='normal.#', durable=True),
+#     Queue(name='low', exchange=Exchange('low'), routing_key='low.#', durable=True),
+# }
+CELERY_TASK_ROUTES = (
+    {
+        'apps.book.tasks.*': {'queue': 'low'},
+    }
+)
+CELERY_TASK_QUEUE_HA_POLICY = {'all'} # RabbitMQ
+CELERY_TASK_QUEUE_MAX_PRIORITY = None # RabbitMQ
+# CELERY_WORKER_DIRECT = False
+CELERY_TASK_CREATE_MISSING_QUEUES = True
+CELERY_TASK_DEFAULT_QUEUE = 'celery'
+CELERY_TASK_DEFAULT_EXCHANGE = 'celery'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'direct'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'celery'
+CELERY_TASK_DEFAULT_DELIVERY_MODE = 'persistent'
 
 # Broker settings
-broker_url = env.str('CELERY_BROKER_URL', default='amqp://')
-# broker_read_url = 'amqp://user:pass@broker.example.com:56721'
-# broker_write_url = 'amqp://user:pass@broker.example.com:56722'
-broker_failover_strategy = 'round-robin'
-broker_heartbeat = 120.0
-broker_heartbeat_checkrate = 2.0
-# broker_use_ssl = {
+CELERY_BROKER_URL = env.str('CELERY_BROKER_URL', default='amqp://')
+# CELERY_BROKER_READ_URL = 'amqp://user:pass@broker.example.com:56721'
+# CELERY_BROKER_WRITE_URL = 'amqp://user:pass@broker.example.com:56722'
+CELERY_BROKER_FAILOVER_STRATEGY = 'round-robin'
+CELERY_BROKER_HEARTBEAT = 120.0
+CELERY_BROKER_HEARTBEAT_CHECKRATE = 2.0
+# CELERY_BROKER_USE_SSL = {
 #   'keyfile': '/var/ssl/private/worker-key.pem',
 #   'certfile': '/var/ssl/amqp-server-cert.pem',
 #   'ca_certs': '/var/ssl/myca.pem',
 #   'cert_reqs': ssl.CERT_REQUIRED
 # }
-broker_pool_limit = 20
-broker_connection_timeout = 4.0
-broker_connection_max_retries = 100
-broker_login_method = 'AMQPLAIN'
-broker_transport_options = {'visibility_timeout': 18000}
+CELERY_BROKER_POOL_LIMIT = 20
+CELERY_BROKER_CONNECTION_TIMEOUT = 4.0
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 100
+CELERY_BROKER_LOGIN_METHOD = 'AMQPLAIN'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 18000}
 
 # Worker
-imports = []
-include = []
-# worker_concurrency = 4 # Default: Number of CPU cores.
-worker_prefetch_multiplier = 4
-worker_lost_wait = 10.0
-# worker_max_tasks_per_child = # Default: no limit
-worker_max_memory_per_child = 20000 # Default: no limit
-worker_disable_rate_limits = False
-worker_state_db = None
-worker_timer_precision = 1.0
-worker_enable_remote_control = True
+CELERY_IMPORTS = []
+CELERY_INCLUDE = []
+# CELERY_WORKER_CONCURRENCY = 4 # Default: Number of CPU cores.
+CELERY_WORKER_PREFETCH_MULTIPLIER = 4
+CELERY_WORKER_LOST_WAIT = 10.0
+# CELERY_WORKER_MAX_TASKS_PER_CHILD = # Default: no limit
+CELERY_WORKER_MAX_MEMORY_PER_CHILD = 20000 # Default: no limit
+CELERY_WORKER_DISABLE_RATE_LIMITS = False
+CELERY_WORKER_STATE_DB = None
+CELERY_WORKER_TIMER_PRECISION = 1.0
+CELERY_WORKER_ENABLE_REMOTE_CONTROL = True
 
 # Event
-worker_send_task_events = False
-task_send_sent_event = False
-event_queue_ttl = 5.0 # amqp
-event_queue_expires = 60.0 # amqp
-event_queue_prefix = 'celeryev'
-event_serializer = 'json'
+CELERY_WORKER_SEND_TASK_EVENTS = False
+CELERY_TASK_SEND_SENT_EVENT = False
+CELERY_EVENT_QUEUE_TTL = 5.0 # amqp
+CELERY_EVENT_QUEUE_EXPIRES = 60.0 # amqp
+CELERY_EVENT_QUEUE_PREFIX = 'celeryev'
+CELERY_EVENT_SERIALIZER = 'json'
 
 # Remote Control Commands
-control_queue_ttl = 300.0
-control_queue_expires = 10.0
+CELERY_CONTROL_QUEUE_TTL = 300.0
+CELERY_CONTROL_QUEUE_EXPIRES = 10.0
 
 # Celery logging
-worker_hijack_root_logger = False
-worker_log_color = True
-worker_log_format = '[%(asctime)s: %(levelname)s/%(processName)s] %(message)s'
-worker_task_log_format = '[%(asctime)s: %(levelname)s/%(processName)s] [%(task_name)s(%(task_id)s)] %(message)s'
-worker_redirect_stdouts = True
-worker_redirect_stdouts_level = 'DEBUG'
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+CELERY_WORKER_LOG_COLOR = True
+CELERY_WORKER_LOG_FORMAT = '[%(asctime)s: %(levelname)s/%(processName)s] %(message)s'
+CELERY_WORKER_TASK_LOG_FORMAT = '[%(asctime)s: %(levelname)s/%(processName)s] [%(task_name)s(%(task_id)s)] %(message)s'
+CELERY_WORKER_REDIRECT_STDOUTS = True
+CELERY_WORKER_REDIRECT_STDOUTS_LEVEL = 'DEBUG'
 
 # Security
-security_key = None
-security_certificate = None
-security_cert_store = None
+CELERY_SECURITY_KEY = None
+CELERY_SECURITY_CERTIFICATE = None
+CELERY_SECURITY_CERT_STORE = None
 
 # Custom Component Classes (advanced)
-# worker_pool = 'prefork'
-# worker_pool_restarts = True
-# worker_autoscaler = 'celery.worker.autoscale:Autoscaler'
-# worker_consumer = 'celery.worker.consumer:Consumer'
-# worker_timer = 'kombu.asynchronous.hub.timer:Timer'
+# CELERY_WORKER_POOL = 'prefork'
+# CELERY_WORKER_POOL_RESTARTS = True
+# CELERY_WORKER_AUTOSCALER = 'celery.worker.autoscale:Autoscaler'
+# CELERY_WORKER_CONSUMER = 'celery.worker.consumer:Consumer'
+# CELERY_WORKER_TIMER = 'kombu.asynchronous.hub.timer:Timer'
 
 # Beat Settings (celery beat)
 from celery.schedules import crontab
 
-beat_schedule = {
-    'Периодическое приветствие': {
-        'task': 'apps.book.tasks.hello_periodic',
-        'schedule': crontab(minute='*/5'),
+CELERY_BEAT_SCHEDULE = {
+    'hello_periodic': {
+        'task': 'apps.book.tasks.hello_periodic.hello_periodic',
+        'schedule': 30.0,
     },
 }
-beat_scheduler = 'django_celery_beat.schedulers:DatabaseScheduler'
-beat_schedule_filename = 'celerybeat-schedule'
-beat_sync_every = 0
-beat_max_loop_interval = 300
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULE_FILENAME = 'celerybeat-schedule'
+CELERY_BEAT_SYNC_EVERY = 0
+CELERY_BEAT_MAX_LOOP_INTERVAL = 300
 
 ### Application logging
 import raven
@@ -349,5 +351,3 @@ LOGGING = {
         },
     },
 }
-
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000
