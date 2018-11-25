@@ -3,7 +3,7 @@ FROM python:3.6-alpine
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
 # Set timezone
-RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
+# RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && echo "Europe/Moscow" >  /etc/timezone
 
 # create app path
 RUN mkdir -p /app
@@ -15,7 +15,11 @@ ARG UID=1000
 ARG HOME=/app
 RUN adduser -u $UID -s /bin/bash -D -h $HOME $USER
 
-# apk install
+# install persistent dependencies
+RUN apk add --update --no-cache postgresql-dev gcc musl-dev make libxslt-dev \
+    jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev
+
+# install temporary dependencies
 RUN apk add --update --no-cache --virtual .build-deps \
 	shadow python3-dev libc-dev libc6-compat zlib-dev libffi-dev ca-certificates
 
@@ -28,15 +32,11 @@ RUN pip3 install pipenv==2018.7.1
 # install apk
 RUN apk add --update --no-cache postgresql-dev gcc musl-dev make libxslt-dev
 
-# apk del
-RUN apk del .build-deps && \
-	rm -rf /var/cache/apk/* /root/.cache /tmp/*
-
 ### supervisor
 EXPOSE 9001
 RUN apk update && apk add git
 RUN pip install git+https://github.com/Supervisor/supervisor # supervisor with support python 3
-ADD ./devops/beat/supervisor /etc/supervisor
+ADD ./devops/celery/supervisor /etc/supervisor
 RUN mkdir /var/log/supervisor
 
 # copy application code
@@ -45,6 +45,10 @@ RUN chown -R app:app /app
 
 # install packages
 RUN pipenv install --deploy --system # --skip-lock
+
+# apk del
+RUN apk del .build-deps && \
+	rm -rf /var/cache/apk/* /root/.cache /tmp/*
 
 # Run celery
 ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisor/supervisord.conf"]

@@ -1,5 +1,4 @@
 import csv
-import re
 
 import transliterate
 from django.contrib import admin
