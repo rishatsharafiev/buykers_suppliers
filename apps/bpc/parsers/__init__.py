@@ -1,3 +1,3 @@
-"""Parser"""
+"""Parsers"""
 
-from .task_parser import TaskParser
+from .supplier import SupplierParser

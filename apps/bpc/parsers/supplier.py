@@ -1,4 +1,5 @@
 import decimal
+import logging
 import zipfile
 
 import openpyxl
@@ -7,11 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 
 from ..models import Good, Picture, Task
-import logging
 
 
-class TaskParser:
-    """Task parser"""
+class SupplierParser:
+    """Supplier parser"""
 
     def run(self, obj):
         """Run"""
@@ -92,7 +92,7 @@ class TaskParser:
                 )
                 goods.append(good)
 
-            Good.objects.bulk_create(goods, 100)
+            Good.objects.bulk_create(goods, 500)
             task.status = Task.STATUS_CHOICE_DONE
         except IntegrityError:
             task.status = Task.STATUS_CHOICE_ERROR

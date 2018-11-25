@@ -48,7 +48,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.book'
+    'apps.bpc'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -143,6 +143,10 @@ STATIC_ROOT = BASE_PATH / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_PATH / 'media'
 
+# Data upload
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 25000
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440 * 4
+
 ### Celery
 # General settings
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -199,7 +203,7 @@ from kombu import Queue, Exchange
 # }
 CELERY_TASK_ROUTES = (
     {
-        'apps.book.tasks.*': {'queue': 'low'},
+        'apps.bpc.tasks.*': {'queue': 'low'},
     }
 )
 CELERY_TASK_QUEUE_HA_POLICY = {'all'} # RabbitMQ
@@ -277,14 +281,7 @@ CELERY_SECURITY_CERT_STORE = None
 # CELERY_WORKER_TIMER = 'kombu.asynchronous.hub.timer:Timer'
 
 # Beat Settings (celery beat)
-from celery.schedules import crontab
-
-CELERY_BEAT_SCHEDULE = {
-    'hello_periodic': {
-        'task': 'apps.book.tasks.hello_periodic.hello_periodic',
-        'schedule': 30.0,
-    },
-}
+CELERY_BEAT_SCHEDULE = {}
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BEAT_SCHEDULE_FILENAME = 'celerybeat-schedule'
 CELERY_BEAT_SYNC_EVERY = 0
@@ -344,7 +341,7 @@ LOGGING = {
             'handlers': ['console', 'sentry'],
             'propagate': False,
         },
-        'apps.book': {
+        'apps.bpc': {
             'level': LOG_LEVEL,
             'handlers': ['console', 'sentry'],
             'propagate': False,

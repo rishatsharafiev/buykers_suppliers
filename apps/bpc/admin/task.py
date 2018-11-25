@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ..tasks import task_parser
+from ..parsers import SupplierParser
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -13,4 +13,4 @@ class TaskAdmin(admin.ModelAdmin):
         """Save method"""
         super().save_model(request, obj, form, change)
 
-        task_parser.delay(obj)
+        SupplierParser().run(obj)
