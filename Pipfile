@@ -25,6 +25,7 @@ lxml = "==4.3.0"
 pydash = "==4.7.4"
 requests = "==2.21.0"
 selenium = "==3.141.0"
+bs4 = "==0.0.1"
 
 [dev-packages]
 

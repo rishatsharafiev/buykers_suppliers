@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7331650287833e77509389129759bd8d5b2c864adb8b48057ff2ffeb1e026a95"
+            "sha256": "0ec06fc0242880c8c4fd3063570fc76d52b3c325783e7c0d5ab651b262887f36"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -37,11 +37,26 @@
             ],
             "version": "==1.5"
         },
+        "beautifulsoup4": {
+            "hashes": [
+                "sha256:034740f6cb549b4e932ae1ab975581e6103ac8f942200a0e9759065984391858",
+                "sha256:945065979fb8529dd2f37dbb58f00b661bdbcbebf954f93b32fdf5263ef35348",
+                "sha256:ba6d5c59906a85ac23dadfe5c88deaf3e179ef565f4898671253e50a78680718"
+            ],
+            "version": "==4.7.1"
+        },
         "billiard": {
             "hashes": [
                 "sha256:42d9a227401ac4fba892918bba0a0c409def5435c4b483267ebfe821afaaba0e"
             ],
             "version": "==3.5.0.5"
+        },
+        "bs4": {
+            "hashes": [
+                "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"
+            ],
+            "index": "pypi",
+            "version": "==0.0.1"
         },
         "celery": {
             "hashes": [
@@ -370,6 +385,13 @@
                 "sha256:9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89"
             ],
             "version": "==1.2.1"
+        },
+        "soupsieve": {
+            "hashes": [
+                "sha256:009d8865916766f7f452880d08ff94ed4c5445011a3deaac67543b82bdb0b9ee",
+                "sha256:97599c45a1ddfe9ab0a0cba889b7f214b3e310b703f176a0610c0b54e207cc04"
+            ],
+            "version": "==1.7.1"
         },
         "tempora": {
             "hashes": [
