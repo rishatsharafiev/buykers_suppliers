@@ -1,4 +1,4 @@
-FROM postgres:10.5-alpine
+FROM postgres:10.6-alpine
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 

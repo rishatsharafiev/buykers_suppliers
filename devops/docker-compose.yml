@@ -38,6 +38,7 @@ services:
       - backend
     depends_on:
       - postgres
+      - selenoid
 
 ### Celery #########################################
   celery:
@@ -95,6 +96,35 @@ services:
     build: ./redis_queue
     volumes:
       - redis_queue:/data
+    networks:
+      - backend
+
+### Selenoid VNC Chrome ################################################
+  selenoid-vnc-chrome:
+    image: selenoid/vnc:chrome_70.0
+
+### Selenoid ################################################
+  selenoid:
+    build: ./selenoid
+    ports:
+      - "${SELENOID_PORT}:4444"
+    volumes:
+      - ${PWD}/selenoid:/etc/selenoid:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=Europe/Moscow
+    depends_on:
+      - selenoid-vnc-chrome
+    networks:
+      - backend
+
+### Selenoid UI ################################################
+  selenoid-ui:
+    build: ./selenoid-ui
+    ports:
+      - "${SELENOID_UI_PORT}:8080"
+    depends_on:
+      - selenoid
     networks:
       - backend
 
