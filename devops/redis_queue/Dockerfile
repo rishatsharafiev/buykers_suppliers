@@ -1,4 +1,4 @@
-FROM redis:5.0-rc-alpine3.8
+FROM redis:5.0.2-alpine3.8
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 

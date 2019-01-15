@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.15.7-alpine
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
