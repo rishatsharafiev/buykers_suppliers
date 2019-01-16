@@ -48,7 +48,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.bpc'
+    'apps.bpc',
+    'apps.fcmoto',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -201,7 +202,11 @@ from kombu import Queue, Exchange
 #     Queue(name='normal', exchange=Exchange('normal'), routing_key='normal.#', durable=True),
 #     Queue(name='low', exchange=Exchange('low'), routing_key='low.#', durable=True),
 # }
-CELERY_TASK_ROUTES = ()
+CELERY_TASK_ROUTES = (
+    {
+        'apps.fcmoto.tasks.*': {'queue': 'fcmoto'},
+    }
+)
 CELERY_TASK_QUEUE_HA_POLICY = {'all'} # RabbitMQ
 CELERY_TASK_QUEUE_MAX_PRIORITY = None # RabbitMQ
 # CELERY_WORKER_DIRECT = False
@@ -338,6 +343,11 @@ LOGGING = {
             'propagate': False,
         },
         'apps.bpc': {
+            'level': LOG_LEVEL,
+            'handlers': ['console', 'sentry'],
+            'propagate': False,
+        },
+        'apps.fcmoto': {
             'level': LOG_LEVEL,
             'handlers': ['console', 'sentry'],
             'propagate': False,
