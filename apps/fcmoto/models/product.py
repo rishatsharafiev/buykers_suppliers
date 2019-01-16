@@ -1,5 +1,6 @@
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.core.validators import URLValidator
 
 from .category import Category
 
@@ -20,20 +21,18 @@ class Product(models.Model):
     )
 
     status = models.CharField(verbose_name='Статус', max_length=255, choices=STATUS_CHOICES, default=STATUS_CHOICE_NEW)
-    link = models.URLField(verbose_name='Ссылка для сбора', max_length=255)
-    name = models.CharField(verbose_name='Название', max_length=255)
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
-    producer = models.CharField(verbose_name='Производитель', max_length=255, null=True, blank=True)
-    price = models.DecimalField(verbose_name='Цена по прайсу', max_digits=12, decimal_places=2,
+    link = models.TextField(verbose_name='Ссылка для сбора')
+    name = models.CharField(verbose_name='Название', max_length=255, blank=True, null=True)
+    name_url = models.CharField(verbose_name='Название url', max_length=255, blank=True, null=True)
+    front_picture = models.TextField(verbose_name='Передний план', validators=[URLValidator], blank=True, null=True)
+    back_picture = models.TextField(verbose_name='Задний план', validators=[URLValidator], blank=True, null=True)
+    price = models.DecimalField(verbose_name='Цена', max_digits=12, decimal_places=2,
                                 blank=True, null=True)
-    retail_price = models.DecimalField(verbose_name='Цена в магазинах сети', max_digits=12, decimal_places=2,
-                                       blank=True, null=True)
-    online_price = models.DecimalField(verbose_name='Цена в интернет-магазине', max_digits=12, decimal_places=2,
-                                       blank=True, null=True)
-    special_price = models.DecimalField(verbose_name='Цена товара недели', max_digits=12, decimal_places=2,
-                                        blank=True, null=True)
-    model = models.CharField(verbose_name='Модель', max_length=255, null=True, blank=True)
-    attributes = JSONField(verbose_name='Атрибуты', blank=True, null=True)
+    attributes = JSONField(verbose_name='Атрибуты', blank=True, null=True)  # colors, sizes
+    description_html = models.TextField(verbose_name='Html описание', blank=True, null=True)
+    description_text = models.TextField(verbose_name='Текстовое описание', blank=True, null=True)
+    manufacturer = models.CharField(verbose_name='Производитель', max_length=255, blank=True, null=True)
 
     created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='Дата обновления', auto_now=True)
@@ -43,7 +42,6 @@ class Product(models.Model):
 
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
-        ordering = ('category', 'producer', 'model',)
 
     def __str__(self):
         return f"{self.name}"
