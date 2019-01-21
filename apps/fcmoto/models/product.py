@@ -1,6 +1,6 @@
-from jsoneditor.fields.postgres_jsonfield import JSONField
-from django.db import models
 from django.core.validators import URLValidator
+from django.db import models
+from jsoneditor.fields.postgres_jsonfield import JSONField
 
 from .category import Category
 
