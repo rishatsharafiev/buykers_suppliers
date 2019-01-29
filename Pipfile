@@ -27,6 +27,7 @@ requests = "==2.21.0"
 selenium = "==3.141.0"
 bs4 = "==0.0.1"
 django-jsoneditor = "==0.1.2"
+furl = "==2.0.0"
 
 [dev-packages]
 

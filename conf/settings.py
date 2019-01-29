@@ -205,11 +205,14 @@ from kombu import Queue, Exchange
 # }
 CELERY_TASK_ROUTES = (
     {
-        'apps.fcmoto.tasks.*': {'queue': 'fcmoto'},
+        # 'apps.fcmoto.tasks.*': {'queue': 'fcmoto'},
+        'apps.fcmoto.tasks.category.category_task': {'queue': 'fcmoto_category'},
+        'apps.fcmoto.tasks.product.product_task': {'queue': 'fcmoto_product'},
+        'apps.fcmoto.tasks.page.page_task': {'queue': 'fcmoto_page'},
     }
 )
-CELERY_TASK_QUEUE_HA_POLICY = {'all'} # RabbitMQ
-CELERY_TASK_QUEUE_MAX_PRIORITY = None # RabbitMQ
+CELERY_TASK_QUEUE_HA_POLICY = {'all'}  # RabbitMQ
+CELERY_TASK_QUEUE_MAX_PRIORITY = None  # RabbitMQ
 # CELERY_WORKER_DIRECT = False
 CELERY_TASK_CREATE_MISSING_QUEUES = True
 CELERY_TASK_DEFAULT_QUEUE = 'celery'
@@ -253,8 +256,8 @@ CELERY_WORKER_ENABLE_REMOTE_CONTROL = True
 # Event
 CELERY_WORKER_SEND_TASK_EVENTS = False
 CELERY_TASK_SEND_SENT_EVENT = False
-CELERY_EVENT_QUEUE_TTL = 5.0 # amqp
-CELERY_EVENT_QUEUE_EXPIRES = 60.0 # amqp
+CELERY_EVENT_QUEUE_TTL = 5.0  # amqp
+CELERY_EVENT_QUEUE_EXPIRES = 60.0  # amqp
 CELERY_EVENT_QUEUE_PREFIX = 'celeryev'
 CELERY_EVENT_SERIALIZER = 'json'
 
@@ -355,3 +358,6 @@ LOGGING = {
         },
     },
 }
+
+# Selenoid
+SELENOID_HUB = env('SELENOID_HUB', cast=str, default='http://selenoid:4444/wd/hub')

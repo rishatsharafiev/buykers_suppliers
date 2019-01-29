@@ -29,4 +29,7 @@ class Page(models.Model):
         verbose_name_plural = 'Страницы'
 
     def __str__(self):
-        return f"{self.pk}"
+        try:
+            return f"{self.category.name} {self.page_url.rsplit('=', 1)[1]}"
+        except IndexError:
+            return f"{self.category.name}"

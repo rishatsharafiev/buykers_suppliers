@@ -3,6 +3,7 @@
 from django.contrib import admin
 
 from .category import CategoryAdmin
+from .page import PageAdmin
 from .product import ProductAdmin
 
 from ..models import (
@@ -12,6 +13,6 @@ from ..models import (
 )
 
 
-admin.site.register(Page)
+admin.site.register(Page, PageAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)

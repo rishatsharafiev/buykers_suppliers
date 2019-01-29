@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8745e8e7c6b8def7658d2f42250c4346acc6bfbf1608b00964635347e36061c5"
+            "sha256": "b59be55246bddab441404aa2a2424b16154ebcc0437802020f0a99b40d0381ce"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -186,6 +186,14 @@
             "index": "pypi",
             "version": "==0.9.2"
         },
+        "furl": {
+            "hashes": [
+                "sha256:f7e90e9f85ef3f2e64485f04c2a80b50af6133942812fd87a44d45305b079018",
+                "sha256:fdcaedc1fb19a63d7d875b0105b0a5b496dd0989330d454a42bcb401fa5454ec"
+            ],
+            "index": "pypi",
+            "version": "==2.0.0"
+        },
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
@@ -268,12 +276,19 @@
             "index": "pypi",
             "version": "==2.6.0b1"
         },
+        "orderedmultidict": {
+            "hashes": [
+                "sha256:24e3b730cf84e4a6a68be5cc760864905cf66abc89851e724bd5b4e849eaa96b",
+                "sha256:b89895ba6438038d0bdf88020ceff876cf3eae0d5c66a69b526fab31125db2c5"
+            ],
+            "version": "==1.0"
+        },
         "packaging": {
             "hashes": [
-                "sha256:0886227f54515e592aaa2e5a553332c73962917f2831f1b0f9b9f4380a4b9807",
-                "sha256:f95a1e147590f204328170981833854229bb2912ac3d5f89e2a8ccd2834800c9"
+                "sha256:0c98a5d0be38ed775798ece1b9727178c4469d9c3b4ada66e8e6b7849f8732af",
+                "sha256:9e1cbf8c12b1f1ce0bb5344b8d7ecf66a6f8a6e91bcb0c84593ed6d3ab5c4ab3"
             ],
-            "version": "==18.0"
+            "version": "==19.0"
         },
         "portend": {
             "hashes": [
@@ -410,10 +425,10 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:009d8865916766f7f452880d08ff94ed4c5445011a3deaac67543b82bdb0b9ee",
-                "sha256:97599c45a1ddfe9ab0a0cba889b7f214b3e310b703f176a0610c0b54e207cc04"
+                "sha256:466910df7561796a60748826781ebe9a888f7a1668a636ae86783f44d10aae73",
+                "sha256:87db12ae79194f0ff9808d2b1641c4f031ae39ffa3cab6b907ea7c1e5e5ed445"
             ],
-            "version": "==1.7.1"
+            "version": "==1.7.3"
         },
         "tempora": {
             "hashes": [
