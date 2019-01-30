@@ -127,14 +127,3 @@ services:
       - selenoid
     networks:
       - backend
-
-### Portainer #########################################
-  portainer:
-    image: portainer/portainer:latest
-    ports:
-      - "${PORTAINER_PORT}:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer:/data
-    networks:
-      - backend
