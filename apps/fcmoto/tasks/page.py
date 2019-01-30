@@ -5,7 +5,7 @@ from ..models import Page, Product
 from ..parsers import PageParser
 
 
-@shared_task(bind=True, max_retries=3, queue='fcmoto_page')
+@shared_task(bind=True, max_retries=3)
 def page_task(self, page_id):
     """Page task"""
     try:

@@ -5,7 +5,7 @@ from ..models import Product
 from ..parsers import ProductParser
 
 
-@shared_task(bind=True, max_retries=3, queue='fcmoto_product')
+@shared_task(bind=True, max_retries=3)
 def product_task(self, product_id=None):
     """Product task"""
     try:

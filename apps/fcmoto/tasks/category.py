@@ -5,7 +5,7 @@ from ..models import Category, Page
 from ..parsers import CategoryParser
 
 
-@shared_task(bind=True, max_retries=3, queue='fcmoto_category')
+@shared_task(bind=True, max_retries=3)
 def category_task(self, category_id):
     """Category task"""
     try:
