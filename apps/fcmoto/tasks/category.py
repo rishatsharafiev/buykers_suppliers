@@ -1,6 +1,7 @@
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
+from .page import page_task
 from ..models import Category, Page
 from ..parsers import CategoryParser
 
@@ -9,12 +10,14 @@ from ..parsers import CategoryParser
 def category_task(self, category_id):
     """Category task"""
     try:
-        category = Category.objects.get(pk=category_id)
+        category = Category.objects.get(id=category_id)
         category_parser = CategoryParser(category.link)
-        soup = category_parser.get_soup()
-        pages = category_parser.get_pages(soup)
+        pages = category_parser.get_pages()
+
         for page in pages:
-            Page.objects.get_or_create(page_url=page, category=category)
+            page, _ = Page.objects.get_or_create(page_url=page, category=category)
+            page_task.delay(page_id=page.id)
+
     except ObjectDoesNotExist:
         pass
     except ConnectionError:

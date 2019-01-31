@@ -9,6 +9,7 @@ class CategoryParser:
     def __init__(self, category_link):
         """Init"""
         self.category_link = category_link
+        self.soup = self.get_soup()
 
     def get_soup(self):
         """Get soup"""
@@ -16,11 +17,11 @@ class CategoryParser:
         soup = BeautifulSoup(page.text, 'html.parser')
         return soup
 
-    def get_pages(self, soup):
+    def get_pages(self):
         """Get pages"""
         pages_list = []
         try:
-            pages = soup.find('ul', class_='PagerSizeContainer').find_all('li')
+            pages = self.soup.find('ul', class_='PagerSizeContainer').find_all('li')
             links = [pydash.get(page, 'a.href') for page in pages]
             page_link, last_page = tuple(links[-2].rsplit('=', 1))
             last_page = int(last_page)

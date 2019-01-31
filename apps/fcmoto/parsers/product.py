@@ -18,8 +18,24 @@ class ProductParser:
 
     logger = logging.getLogger(__name__)
 
-    def run(self, product_ids):
-        """Run"""
+    def get_element_by_css_selector(self, driver, selector):
+        """Get element by CSS selector"""
+        try:
+            element = driver.find_element_by_css_selector(selector)
+        except (NoSuchElementException, TimeoutException):
+            element = None
+        return element
+
+    def get_elements_by_css_selector(self, driver, selector):
+        """Get elements by CSS selector"""
+        try:
+            elements = driver.find_elements_by_css_selector(selector)
+        except (NoSuchElementException, TimeoutException):
+            elements = []
+        return elements
+
+    def get_products(self, products_items):
+        """Get products"""
         capabilities = {
             "browserName": "chrome",
             "version": "70.0",
@@ -47,48 +63,27 @@ class ProductParser:
         driver = webdriver.Remote(
             command_executor=settings.SELENOID_HUB,
             desired_capabilities=capabilities)
-        products = Product.objects.filter(id__in=product_ids)
-
-        product_items = []
-        for product in products:
+        # Product item: {'id': 2, 'link': 'http://link_to_item.com/'}
+        products_ = []
+        for product_item in products_items:
             try:
-                driver.get(product.link)
-                try:
-                    product_items.append(self.get_product(driver, product.link))
-                except NoSuchElementException:
-                    product.status = Product.STATUS_CHOICE_ERROR
-                    product.save()
-                    return
-                except Exception as err:
-                    self.logger.warning(str(err))
-                except DecimalException:
-                    pass
+                driver.get(product_item['link'])
+                new_item_data = self.get_product(driver, product_item['link'])
+
+                new_item_data['status'] = Product.STATUS_CHOICE_DONE
+                products_.append({**new_item_data, **product_item})
             except WebDriverException:
-                raise WebDriverException
+                new_item_data = None
+                new_item_data['status'] = Product.STATUS_CHOICE_ERROR
+                products_.append({**new_item_data, **product_item})
             finally:
                 try:
                     driver.quit()
                 except (WebDriverException, TimeoutException):
                     pass
-        return product_items
+        return products_
 
-    def get_element_by_css_selector(self, driver, selector):
-        """Get element by CSS selector"""
-        try:
-            element = driver.find_element_by_css_selector(selector)
-        except (NoSuchElementException, TimeoutException):
-            element = None
-        return element
-
-    def get_elements_by_css_selector(self, driver, selector):
-        """Get elements by CSS selector"""
-        try:
-            elements = driver.find_elements_by_css_selector(selector)
-        except (NoSuchElementException, TimeoutException):
-            elements = []
-        return elements
-
-    def get_product(self, driver, link):
+    def get_product(self, driver, link) -> dict:
         """Get single product"""
         initial_wait = WebDriverWait(driver, 3 * 60)
         initial_wait.until(
