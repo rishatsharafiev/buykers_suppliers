@@ -72,9 +72,10 @@ class ProductParser:
 
                 new_item_data['status'] = Product.STATUS_CHOICE_DONE
                 products_.append({**new_item_data, **product_item})
-            except WebDriverException:
-                new_item_data = None
-                new_item_data['status'] = Product.STATUS_CHOICE_ERROR
+                time.sleep(3)
+            except WebDriverException as err:
+                self.logger.info(str(err))
+                new_item_data = {'status': Product.STATUS_CHOICE_ERROR}
                 products_.append({**new_item_data, **product_item})
             finally:
                 try:
@@ -142,7 +143,7 @@ class ProductParser:
 
         # 'Описание'
         description = self.get_element_by_css_selector(driver, '.description[itemprop="description"]')
-        description_text = description.text if description else ''
+        description_text = description.get_attribute('innerText') if description else ''
         description_html = description.get_attribute('innerHTML') if description else ''
 
         # 'Название url'

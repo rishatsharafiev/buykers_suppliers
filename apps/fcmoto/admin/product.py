@@ -12,7 +12,7 @@ class ProductAdmin(admin.ModelAdmin):
     def parse(self, request, products):
         """Run category parser"""
         all_product_ids = [product.id for product in products.exclude(status=Product.STATUS_CHOICE_DONE)]
-        products_per_task = 20
+        products_per_task = 10
 
         for pos in range(int(ceil(len(all_product_ids) / products_per_task))):
             group_ids = all_product_ids[pos * products_per_task:pos * products_per_task + products_per_task]
