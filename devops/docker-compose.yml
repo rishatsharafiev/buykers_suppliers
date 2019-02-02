@@ -101,7 +101,7 @@ services:
 
 ### Selenoid VNC Chrome ################################################
   selenoid-vnc-chrome:
-    image: selenoid/vnc:chrome_70.0
+    image: selenoid/vnc:chrome_72.0
 
 ### Selenoid ################################################
   selenoid:

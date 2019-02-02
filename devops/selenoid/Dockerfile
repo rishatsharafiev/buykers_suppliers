@@ -1,4 +1,4 @@
-FROM aerokube/selenoid:1.8.1
+FROM aerokube/selenoid:1.9.0
 
 MAINTAINER Rishat Sharafiev <rishatsharafiev@ya.ru>
 
