@@ -13,7 +13,7 @@ class CategoryParser:
 
     def get_soup(self):
         """Get soup"""
-        page = requests.get(self.category_link)
+        page = requests.get(self.category_link, timeout=30)
         soup = BeautifulSoup(page.text, 'lxml')
         return soup
 

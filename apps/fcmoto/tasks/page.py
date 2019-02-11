@@ -11,21 +11,51 @@ from ..parsers import PageParser
 @shared_task(bind=True, max_retries=3)
 def page_task(self, page_id):
     """Page task"""
+    page = None
+
     try:
         page = Page.objects.get(pk=page_id)
-        page_parser = PageParser(page.page_url)
+
+        # set status
+        page.status = Page.STATUS_CHOICE_PROGRESS
+        page.save()
+
+        page_parser = PageParser(page_url=page.page_url)
+
+        # save new links and update old ones
         links = page_parser.get_links()
-
-        product_ids = []
-        products_per_task = 20
         for link in links:
-            product, _ = Product.objects.get_or_create(category=page.category, link=link)
-            product_ids.append(product.id)
+            Product.objects.update_or_create(category=page.category, link=link,
+                                             defaults={'status': Product.STATUS_CHOICE_NEW})
 
-        for pos in range(int(ceil(len(product_ids) / products_per_task))):
-            group_ids = product_ids[pos * products_per_task:pos * products_per_task + products_per_task]
-            product_task.delay(product_ids=group_ids)
+        # get all new products for parsing
+        products = list(Product.objects.filter(category=page.category, status=Product.STATUS_CHOICE_NEW))
+
+        recycle = True
+        slice_count = 20
+        product_ids = []
+
+        while recycle:
+            # collect product ids
+            for i in range(slice_count):
+                try:
+                    product_ids.append(products.pop().pk)
+                except IndexError:
+                    recycle = False
+                    break
+            # run task
+            product_task.delay(product_ids=product_ids)
+
+        # set status
+        page.status = Page.STATUS_CHOICE_DONE
+        page.save()
     except ConnectionError:
-        self.retry(countdown=10)
+        if page and hasattr(page, 'save'):
+            # set status
+            page.status = Page.STATUS_CHOICE_ERROR
+            page.save()
+
+            # retry task
+            self.retry(countdown=10)
     except ObjectDoesNotExist:
         pass
