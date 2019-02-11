@@ -21,5 +21,5 @@ class PageParser:
     def get_soup(self):
         """Get soup"""
         page = requests.get(self.page_url)
-        soup = BeautifulSoup(page.text, 'html.parser')
+        soup = BeautifulSoup(page.text, 'lxml')
         return soup

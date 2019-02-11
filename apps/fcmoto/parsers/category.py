@@ -14,7 +14,7 @@ class CategoryParser:
     def get_soup(self):
         """Get soup"""
         page = requests.get(self.category_link)
-        soup = BeautifulSoup(page.text, 'html.parser')
+        soup = BeautifulSoup(page.text, 'lxml')
         return soup
 
     def get_pages(self):
