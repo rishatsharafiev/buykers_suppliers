@@ -26,10 +26,10 @@ sudo apt-get install docker-ce -y
 # docker compose
 sudo pip install docker-compose
 
-# enable swap 2G
+# enable swap 4G
 sudo swapoff /swapfile
 
-sudo fallocate -l 2G /swapfile
+sudo fallocate -l 4G /swapfile
 sudo chmod 600 /swapfile
 
 sudo mkswap /swapfile
@@ -55,7 +55,6 @@ chown buykers_suppliers:buykers_suppliers /home/buykers_suppliers -R
 nano /etc/sudoers
 buykers_suppliers  ALL=(ALL) ALL
  # add to sudo 
-nano /etc/sudoers
 
 # docker without sudo
 su buykers_suppliers
@@ -103,7 +102,6 @@ sudo chmod 777 media -R
 
 ### Install Supervisor
 ```
-apt-get install supervisor
-mkdir /etc/supervisor
-mkdir /etc/supervisor/conf.d 
+apt-get install supervisor -y
+systemctl restart supervisor.service
 ```
