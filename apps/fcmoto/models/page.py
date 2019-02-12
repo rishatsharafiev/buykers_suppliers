@@ -22,6 +22,9 @@ class Page(models.Model):
     page_url = models.TextField(verbose_name='Ссылка на страницу')
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
 
+    created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='Дата обновления', auto_now=True)
+
     class Meta:
         """Meta"""
 

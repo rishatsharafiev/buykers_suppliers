@@ -1,5 +1,3 @@
-from math import ceil
-
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -45,6 +43,7 @@ def page_task(self, page_id):
                     break
             # run task
             product_task.delay(product_ids=product_ids)
+            product_ids = []
 
         # set status
         page.status = Page.STATUS_CHOICE_DONE

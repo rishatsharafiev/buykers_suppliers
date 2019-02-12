@@ -11,7 +11,11 @@ class PageAdmin(admin.ModelAdmin):
         for page in pages:
             page_task.delay(page_id=page.id)
 
-    parse.short_description = "Начать парсинг"
+    parse.short_description = 'Начать парсинг'
 
-    actions = (parse,)
+    list_display = ('id', 'status', 'category', 'updated_at',)
+    list_filter = ('status', 'category__name',)
+    search_fields = ('name',)
     list_per_page = 20
+    readonly_fields = ('created_at', 'updated_at',)
+    actions = (parse,)
