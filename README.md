@@ -94,6 +94,11 @@ cd devops && docker-compose -p buykers_suppliers build
 docker-compose -p buykers_suppliers up --force-recreate -d
 ```
 
+### Connect to docker
+```
+docker exec -it buykers_suppliers_app_1 sh
+```
+
 ### Static and media
 ```
 sudo chmod 777 static -R
