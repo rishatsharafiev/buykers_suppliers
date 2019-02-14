@@ -362,8 +362,8 @@ class ProductParser:
 
         # 'Описание'
         description = self.get_element_by_css_selector(driver, '.description[itemprop="description"]')
-        description_text = description.get_attribute('innerText') if description else ''
-        description_html = description.get_attribute('innerHTML') if description else ''
+        description_text = str(description.get_attribute('innerText')).strip() if description else ''
+        description_html = str(description.get_attribute('innerHTML')).strip() if description else ''
 
         # 'Название url'
         f = furl(link.replace('?', ''))
