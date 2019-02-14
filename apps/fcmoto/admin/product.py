@@ -1,8 +1,5 @@
-from math import ceil
-
 from django.contrib import admin
 
-from ..models import Product
 from ..tasks import product_task
 
 

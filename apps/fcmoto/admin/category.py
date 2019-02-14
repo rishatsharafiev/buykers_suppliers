@@ -19,7 +19,6 @@ class CategoryAdmin(admin.ModelAdmin):
 
     def export_as_csv(self, request, categories):
         """Export csv file"""
-
         for category in categories:
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = "attachment; filename=export_webasyst_{category_id}.csv".format(

@@ -16,3 +16,7 @@ from ..models import (
 admin.site.register(Page, PageAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
+
+admin.site.site_header = 'Справочник мото продукции'
+admin.site.site_title = 'Справочник мото продукции'
+admin.site.index_title = 'Панель управления'
