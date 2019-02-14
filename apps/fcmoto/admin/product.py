@@ -29,8 +29,8 @@ class ProductAdmin(admin.ModelAdmin):
     parse.short_description = 'Начать парсинг'
 
     actions = (parse,)
-    list_display = ('id', 'status', 'category', 'updated_at', 'link', 'name', 'name_url', 'price',)
-    list_filter = ('status', 'category__name',)
+    list_display = ('id', 'is_active', 'status', 'category', 'updated_at', 'link', 'name', 'name_url', 'price',)
+    list_filter = ('status', 'is_active', 'category__name',)
     search_fields = ('name',)
     list_per_page = 20
     readonly_fields = ('created_at', 'updated_at',)

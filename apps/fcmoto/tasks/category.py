@@ -22,10 +22,16 @@ def category_task(self, category_id):
         category_parser = CategoryParser(category_link=category.link)
         pages = category_parser.get_pages()
 
+        # set is_active to False
+        Page.objects.filter(category=category).update(is_active=False)
+
         # update pages
         for page in pages:
             page, _ = Page.objects.update_or_create(page_url=page, category=category,
-                                                    defaults={'status': Page.STATUS_CHOICE_NEW})
+                                                    defaults={
+                                                        'status': Page.STATUS_CHOICE_NEW,
+                                                        'is_active': True,
+                                                    })
             page_task.delay(page_id=page.id)
 
         # set status

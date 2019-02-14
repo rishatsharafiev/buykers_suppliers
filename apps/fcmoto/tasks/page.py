@@ -20,14 +20,21 @@ def page_task(self, page_id):
 
         page_parser = PageParser(page_url=page.page_url)
 
+        # set product.is_active False
+        Product.objects.filter(category=page.category, page=page).update(is_active=False)
+
         # save new links and update old ones
         links = page_parser.get_links()
         for link in links:
             Product.objects.update_or_create(category=page.category, link=link,
-                                             defaults={'status': Product.STATUS_CHOICE_NEW})
+                                             defaults={
+                                                 'page': page,
+                                                 'status': Product.STATUS_CHOICE_NEW,
+                                                 'is_active': True,
+                                             })
 
         # get all new products for parsing
-        products = list(Product.objects.filter(category=page.category, status=Product.STATUS_CHOICE_NEW))
+        products = list(Product.objects.filter(category=page.category, page=page, status=Product.STATUS_CHOICE_NEW))
 
         recycle = True
         slice_count = 20

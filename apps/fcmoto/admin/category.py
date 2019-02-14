@@ -155,7 +155,7 @@ class CategoryAdmin(admin.ModelAdmin):
             ]
             csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE)
+            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE, is_active=True)
 
             for product in products:
                 counter = 1

@@ -19,6 +19,7 @@ class Page(models.Model):
     )
 
     status = models.CharField(verbose_name='Статус', max_length=255, choices=STATUS_CHOICES, default=STATUS_CHOICE_NEW)
+    is_active = models.BooleanField(verbose_name='Активен', default=True)
     page_url = models.TextField(verbose_name='Ссылка на страницу')
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
 

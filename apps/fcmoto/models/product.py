@@ -3,6 +3,7 @@ from django.db import models
 from jsoneditor.fields.postgres_jsonfield import JSONField
 
 from .category import Category
+from .page import Page
 
 
 class Product(models.Model):
@@ -21,7 +22,9 @@ class Product(models.Model):
     )
 
     status = models.CharField(verbose_name='Статус', max_length=255, choices=STATUS_CHOICES, default=STATUS_CHOICE_NEW)
+    is_active = models.BooleanField(verbose_name='Активен', default=True)
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
+    page = models.ForeignKey(Page, verbose_name='Страница', on_delete=models.SET_NULL, blank=True, null=True)
     link = models.TextField(verbose_name='Ссылка для сбора')
     name = models.CharField(verbose_name='Название', max_length=255, blank=True, null=True)
     name_url = models.CharField(verbose_name='Название url', max_length=255, blank=True, null=True)
