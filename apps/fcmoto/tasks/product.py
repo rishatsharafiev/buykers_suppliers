@@ -16,9 +16,9 @@ def product_task(self, product_ids):
         # items: [{'id':1 , 'price':23412, ..}, {'id':2 , 'price':2342, ..}, ..]
 
         for item in items:
-            product, _ = Product.objects.get_or_create(id=item.get('id'))
+            product, _ = Product.objects.filter(id=item.get('id')).first()
             status = item.get('status')
-            if status == Product.STATUS_CHOICE_DONE:
+            if product and status == Product.STATUS_CHOICE_DONE:
                 product.name = item.get('name')
                 product.manufacturer = item.get('manufacturer')
                 product.name_url = item.get('name_url')
