@@ -1,7 +1,6 @@
 import logging
 import random
-import time
-from decimal import Decimal, DecimalException
+from decimal import Decimal, InvalidOperation
 
 from conf import settings
 from furl import furl
@@ -288,11 +287,11 @@ class ProductParser:
             for product_item in products_items:
                 try:
                     driver.get(product_item.get('link'))
+                    driver.implicitly_wait(1)
                     new_item_data = self.get_product(driver, product_item.get('link'))
 
                     new_item_data['status'] = Product.STATUS_CHOICE_DONE
                     products.append({**new_item_data, **product_item})
-                    time.sleep(1)
                 except WebDriverException:
                     new_item_data = {'status': Product.STATUS_CHOICE_ERROR}
                     products.append({**new_item_data, **product_item})
@@ -344,8 +343,8 @@ class ProductParser:
         price = price.text if price else ''
         try:
             price_cleaned = Decimal(price.replace('руб.', '').replace(' ', '').replace(',', '.'))
-        except DecimalException:
-            raise DecimalException
+        except InvalidOperation:
+            price_cleaned = None
 
         # 'Фотография'
         front_picture = self.get_element_by_css_selector(driver, '#ICImageMediumLarge')
