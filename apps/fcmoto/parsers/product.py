@@ -1,5 +1,6 @@
 import logging
 import random
+import time
 from decimal import Decimal, InvalidOperation
 
 from conf import settings
@@ -295,6 +296,7 @@ class ProductParser:
                 except WebDriverException:
                     new_item_data = {'status': Product.STATUS_CHOICE_ERROR}
                     products.append({**new_item_data, **product_item})
+                time.sleep(1)
         finally:
             try:
                 driver.quit()
@@ -304,7 +306,7 @@ class ProductParser:
 
     def get_product(self, driver, link) -> dict:
         """Get single product"""
-        initial_wait = WebDriverWait(driver, 3 * 60)
+        initial_wait = WebDriverWait(driver, 30)
         initial_wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.ContentAreaWrapper'))
         )
