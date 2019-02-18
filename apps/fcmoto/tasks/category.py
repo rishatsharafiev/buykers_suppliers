@@ -1,5 +1,6 @@
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
+from requests.exceptions import ConnectionError
 
 from .page import page_task
 from ..models import Category, Page
