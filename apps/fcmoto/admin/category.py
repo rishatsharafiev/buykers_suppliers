@@ -213,10 +213,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
             products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE, is_active=True)
 
+            bage_html = '<div class="badge" style="background-color: #ff8c2b;"><span>в Европе</span></div>'
+
             for product in products:
                 counter = 1
                 product_list = []
                 all_sizes = []
+                all_available = 0
+                is_main_article = True
 
                 name = product.name
                 name_url = product.name_url
@@ -235,107 +239,116 @@ class CategoryAdmin(admin.ModelAdmin):
                     all_sizes.append(size_value)
 
                     available_value = 1 if size.get('available', False) else 0
+                    all_available += available_value
+
                     keywords = ", ".join(name.split(' '))
+
+                    if available_value and is_main_article:
+                        main_article = 1
+                        is_main_article = False
+                    else:
+                        main_article = 0
 
                     if counter == 1:
                         item = [
                             name,
-                            '<Наименование артикула>',
+                            '{size}, {colors}'.format(size=size_value, colors=color_value).strip(', '),
                             'RUB',
                             price,
-                            '<Доступен для заказа>',
-                            '<Зачеркнутая цена>',
+                            str(1 if available_value else 0),
+                            str(0),
                             price,
-                            '<В наличии>',
-                            '<Основной артикул>',
-                            '<В наличии @шоу-рум в Москве (в наличии)>',
-                            '<В наличии @склад в Москве (1-2 дня)>',
-                            '<В наличии @cклад в Европе (около 10 дней)>',
+                            str(1 if available_value else 0),
+                            str(main_article),
+                            str(0),
+                            str(0),
+                            str(1 if available_value else 0),
                             'Купить {}'.format(name),
                             description_html,
-                            '<Наклейка>',
+                            bage_html,
                             '1',
                             'Одежда',
-                            keywords,
+                            '<{{{keywords}}}>'.format(keywords=keywords).replace('<{}>', ''),
                             name,
                             keywords,
                             description_text,
                             name_url,
-                            manufacturer,
-                            gender_value,
                             '',
-                            '<{{{color}}}>'.format(color=color_value).replace('<{}>', ''),
+                            '',
+                            str(size_value),
+                            str(color_value),
                             front_picture,
                             back_picture,
                         ]
                         product_list.append(item)
-                    elif len(sizes) == counter:
-                        all_size = ",".join(sorted(all_sizes))
-
-                        main_item = [
-                            name,
-                            '<Наименование артикула>',
-                            'RUB',
-                            price,
-                            '<Доступен для заказа>',
-                            '<Зачеркнутая цена>',
-                            price,
-                            '<В наличии>',
-                            '<Основной артикул>',
-                            '<В наличии @шоу-рум в Москве (в наличии)>',
-                            '<В наличии @склад в Москве (1-2 дня)>',
-                            '<В наличии @cклад в Европе (около 10 дней)>',
-                            'Купить {}'.format(name),
-                            description_html,
-                            '<Наклейка>',
-                            '1',
-                            'Одежда',
-                            keywords,
-                            name,
-                            keywords,
-                            description_text,
-                            name_url,
-                            manufacturer,
-                            gender_value,
-                            '<{{{all_size}}}>'.format(all_size=all_size).replace('<{}>', ''),
-                            '<{{{color}}}>'.format(color=color_value).replace('<{}>', ''),
-                            front_picture,
-                            back_picture,
-                        ]
-                        product_list.insert(0, main_item)
                     else:
                         item = [
                             name,
-                            '<Наименование артикула>',
+                            '{size}, {colors}'.format(size=size_value, colors=color_value).strip(', '),
                             'RUB',
                             price,
-                            '<Доступен для заказа>',
-                            '<Зачеркнутая цена>',
+                            str(1 if available_value else 0),
+                            str(0),
                             price,
-                            '<В наличии>',
-                            '<Основной артикул>',
-                            '<В наличии @шоу-рум в Москве (в наличии)>',
-                            '<В наличии @склад в Москве (1-2 дня)>',
-                            '<В наличии @cклад в Европе (около 10 дней)>',
-                            'Купить {}'.format(name),
-                            description_html,
-                            '<Наклейка>',
+                            str(1 if available_value else 0),
+                            str(main_article),
+                            str(0),
+                            str(0),
+                            str(1 if available_value else 0),
+                            '',
+                            '',
+                            bage_html,
                             '1',
                             'Одежда',
-                            keywords,
-                            name,
-                            keywords,
-                            description_text,
-                            name_url,
-                            manufacturer,
-                            gender_value,
                             '',
-                            '<{{{color}}}>'.format(color=color_value).replace('<{}>', ''),
-                            front_picture,
-                            back_picture,
+                            '',
+                            '',
+                            '',
+                            name_url,
+                            '',
+                            '',
+                            str(size_value),
+                            str(color_value),
+                            '',
+                            '',
                         ]
                         product_list.append(item)
                     counter += 1
+
+                # title
+                all_size = ",".join(sorted(all_sizes))
+
+                main_item = [
+                    name,
+                    '',
+                    'RUB',
+                    price,
+                    str(1 if all_available else 0),
+                    str(0),
+                    price,
+                    str(all_available),
+                    '',
+                    '',
+                    '',
+                    '',
+                    'Купить {}'.format(name),
+                    description_html,
+                    bage_html,
+                    '1',
+                    'Одежда',
+                    '<{{{keywords}}}>'.format(keywords=keywords).replace('<{}>', ''),
+                    name,
+                    keywords,
+                    description_text,
+                    name_url,
+                    manufacturer,
+                    gender_value,
+                    '<{{{all_size}}}>'.format(all_size=all_size).replace('<{}>', ''),
+                    '<{{{color}}}>'.format(color=color_value).replace('<{}>', ''),
+                    front_picture,
+                    back_picture,
+                ]
+                product_list.insert(0, main_item)
                 [csv_writer.writerow(item) for item in product_list]
 
             return response
