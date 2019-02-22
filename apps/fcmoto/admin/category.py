@@ -215,6 +215,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
             bage_html = '<div class="badge" style="background-color: #ff8c2b;"><span>в Европе</span></div>'
 
+            category_margin = category.margin if category.margin else 0
+            category_delivery = category.delivery if category.delivery else 0
+
             for product in products:
                 counter = 1
                 product_list = []
@@ -227,7 +230,8 @@ class CategoryAdmin(admin.ModelAdmin):
                 manufacturer = product.manufacturer
                 front_picture = product.front_picture
                 back_picture = product.back_picture
-                price = math.ceil(product.price)
+                purchase_price = math.ceil(product.price)
+                online_price = math.ceil(purchase_price + purchase_price * category_margin / 100 + category_delivery)
                 description_html = product.description_html
                 description_text = product.description_text
                 sizes = product.attributes.get('sizes', [])
@@ -254,10 +258,10 @@ class CategoryAdmin(admin.ModelAdmin):
                             name,
                             '{size}, {colors}'.format(size=size_value, colors=color_value).strip(', '),
                             'RUB',
-                            price,
+                            online_price,
                             str(1 if available_value else 0),
                             str(0),
-                            price,
+                            purchase_price,
                             str(1 if available_value else 0),
                             str(main_article),
                             str(0),
@@ -286,10 +290,10 @@ class CategoryAdmin(admin.ModelAdmin):
                             name,
                             '{size}, {colors}'.format(size=size_value, colors=color_value).strip(', '),
                             'RUB',
-                            price,
+                            online_price,
                             str(1 if available_value else 0),
                             str(0),
-                            price,
+                            purchase_price,
                             str(1 if available_value else 0),
                             str(main_article),
                             str(0),
@@ -322,10 +326,10 @@ class CategoryAdmin(admin.ModelAdmin):
                     name,
                     '',
                     'RUB',
-                    price,
+                    online_price,
                     str(1 if all_available else 0),
                     str(0),
-                    price,
+                    purchase_price,
                     str(all_available),
                     '',
                     '',
