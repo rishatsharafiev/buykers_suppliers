@@ -1,8 +1,10 @@
 import csv
 import math
+import re
 
 from django.contrib import admin
 from django.shortcuts import HttpResponse
+from transliterate import detect_language, translit
 
 from ..models import Product
 from ..tasks import category_task
@@ -237,6 +239,17 @@ class CategoryAdmin(admin.ModelAdmin):
                 sizes = product.attributes.get('sizes', [])
                 color_value = product.attributes.get('color', '')
                 gender_value = product.category.gender if product.category else ''
+                keywords = ", ".join(name.split(' '))
+
+                name_url_cleaned = re.sub(r'(\-\d{4})$', '', name_url)
+                color_value_cleaned = re.sub(r'[\-\/\s]', '-', color_value.lower())
+
+                lang = detect_language(color_value_cleaned)
+                color_value_translated = translit(color_value_cleaned, 'ru', reversed=lang)
+                if color_value_translated:
+                    name_url_unique = f'{name_url_cleaned}-{color_value_translated}'
+                else:
+                    name_url_unique = f'{name_url_cleaned}'
 
                 for size in sizes:
                     size_value = size.get('size', '').strip()
@@ -245,13 +258,11 @@ class CategoryAdmin(admin.ModelAdmin):
                     available_value = 1 if size.get('available', False) else 0
                     all_available += available_value
 
-                    keywords = ", ".join(name.split(' '))
-
                     if available_value and is_main_article:
-                        main_article = 1
+                        main_article = str(1)
                         is_main_article = False
                     else:
-                        main_article = 0
+                        main_article = ''
 
                     if counter == 1:
                         item = [
@@ -263,7 +274,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             str(0),
                             purchase_price,
                             str(1 if available_value else 0),
-                            str(main_article),
+                            main_article,
                             str(0),
                             str(0),
                             str(1 if available_value else 0),
@@ -276,7 +287,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             name,
                             keywords,
                             description_text,
-                            name_url,
+                            name_url_unique,
                             '',
                             '',
                             str(size_value),
@@ -295,7 +306,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             str(0),
                             purchase_price,
                             str(1 if available_value else 0),
-                            str(main_article),
+                            main_article,
                             str(0),
                             str(0),
                             str(1 if available_value else 0),
@@ -308,7 +319,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             '',
                             '',
                             '',
-                            name_url,
+                            name_url_unique,
                             '',
                             '',
                             str(size_value),
@@ -344,7 +355,7 @@ class CategoryAdmin(admin.ModelAdmin):
                     name,
                     keywords,
                     description_text,
-                    name_url,
+                    name_url_unique,
                     manufacturer,
                     gender_value,
                     '<{{{all_size}}}>'.format(all_size=all_size).replace('<{}>', ''),
