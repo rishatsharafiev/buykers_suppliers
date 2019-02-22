@@ -16,6 +16,7 @@ from ..models import Product
 
 class ProductParser:
     """Product parser"""
+
     logger = logging.getLogger(__name__)
 
     user_agents = [
