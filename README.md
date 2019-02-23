@@ -110,3 +110,36 @@ sudo chmod 777 media -R
 apt-get install supervisor -y
 systemctl restart supervisor.service
 ```
+
+
+### Slow Docker Network
+Source page https://aerokube.com/selenoid/latest/#_recommended_docker_settings
+
+1. Get Mac Address
+```
+ifconfig
+```
+2. Set Mac Address
+
+```
+ip link set docker0 address 00:25:90:eb:fb:3e
+```
+3. Make it permanent
+```
+# /etc/netplan/01-netcfg.yaml
+# This file describes the network interfaces available on your system
+# For more information, see netplan(5).
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens3:
+      dhcp4: yes
+    docker0:
+      macaddress: 00:80:13:c5:ff:70
+      dhcp4: true
+```
+4. 
+```
+sudo netplan apply
+```
