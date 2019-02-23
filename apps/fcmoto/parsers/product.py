@@ -293,8 +293,8 @@ class ProductParser:
 
                     new_item_data['status'] = Product.STATUS_CHOICE_DONE
                     products.append({**new_item_data, **product_item})
-                except WebDriverException:
-                    new_item_data = {'status': Product.STATUS_CHOICE_ERROR}
+                except WebDriverException as exp:
+                    new_item_data = {'status': Product.STATUS_CHOICE_ERROR, 'name': str(exp)}
                     products.append({**new_item_data, **product_item})
                 time.sleep(1)
         finally:

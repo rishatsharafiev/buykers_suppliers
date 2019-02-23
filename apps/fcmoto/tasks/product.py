@@ -32,6 +32,7 @@ def product_task(self, product_ids):
                 product.status = Product.STATUS_CHOICE_DONE
                 product.save()
             elif status == Product.STATUS_CHOICE_ERROR:
+                product.name = item.get('name')
                 product.status = Product.STATUS_CHOICE_ERROR
                 product.save()
 
