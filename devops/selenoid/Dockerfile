@@ -11,4 +11,4 @@ ENTRYPOINT ["/usr/bin/selenoid", "-listen", ":4444", \
             "-session-attempt-timeout", "60s", \
             "-session-delete-timeout", "20s", \
             "-timeout", "90s", \
-            "-limit", "2"]
+            "-limit", "1"]
