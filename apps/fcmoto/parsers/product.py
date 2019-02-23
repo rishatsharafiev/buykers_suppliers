@@ -306,7 +306,7 @@ class ProductParser:
 
     def get_product(self, driver, link) -> dict:
         """Get single product"""
-        initial_wait = WebDriverWait(driver, 30)
+        initial_wait = WebDriverWait(driver, 60)
         initial_wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.ContentAreaWrapper'))
         )
@@ -355,6 +355,7 @@ class ProductParser:
         activate_second_picture = \
             self.get_element_by_css_selector(driver, '#ProductThumbBar > li:nth-child(2) > img')
 
+        back_picture = None
         if activate_second_picture:
             activate_second_picture.click()
             time.sleep(2)

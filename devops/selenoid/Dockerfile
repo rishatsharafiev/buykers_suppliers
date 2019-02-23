@@ -9,6 +9,6 @@ ENTRYPOINT ["/usr/bin/selenoid", "-listen", ":4444", \
             "-log-conf", "/etc/selenoid/config/container-logs.json", \
             "-service-startup-timeout", "60s", \
             "-session-attempt-timeout", "60s", \
-            "-session-delete-timeout", "10s", \
-            "-timeout", "60s", \
+            "-session-delete-timeout", "20s", \
+            "-timeout", "90s", \
             "-limit", "2"]

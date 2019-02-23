@@ -35,5 +35,6 @@ def product_task(self, product_ids):
                 product.status = Product.STATUS_CHOICE_ERROR
                 product.save()
 
+        return items
     except (ConnectionError, WebDriverException):
         self.retry(countdown=10)
