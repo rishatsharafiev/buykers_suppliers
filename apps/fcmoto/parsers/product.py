@@ -258,7 +258,7 @@ class ProductParser:
         capabilities = {
             "browserName": "chrome",
             "version": "72.0",
-            "screenResolution": "1024x600x16",
+            "screenResolution": "736x414x8",
             "enableVNC": True,
             "enableVideo": False,
             "chromeOptions": {

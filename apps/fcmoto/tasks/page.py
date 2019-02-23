@@ -34,8 +34,8 @@ def page_task(self, page_id):
                                                  'is_active': True,
                                              })
 
-        # get all new products for parsing
-        products = list(Product.objects.filter(category=page.category, page=page, status=Product.STATUS_CHOICE_NEW))
+        # get all products from page for parsing
+        products = list(Product.objects.filter(category=page.category, page=page))
 
         recycle = True
         slice_count = 20

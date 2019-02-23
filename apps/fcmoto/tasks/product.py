@@ -35,6 +35,6 @@ def product_task(self, product_ids):
                 product.status = Product.STATUS_CHOICE_ERROR
                 product.save()
 
-        return items
+        return len(list(filter(lambda i: i.get('status') == Product.STATUS_CHOICE_DONE, items)))
     except (ConnectionError, WebDriverException):
         self.retry(countdown=10)

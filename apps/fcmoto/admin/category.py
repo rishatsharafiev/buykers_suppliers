@@ -213,7 +213,7 @@ class CategoryAdmin(admin.ModelAdmin):
             ]
             csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE, is_active=True)
+            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE)
 
             bage_html = '<div class="badge" style="background-color: #ff8c2b;"><span>в Европе</span></div>'
 
@@ -257,6 +257,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
                     available_value = 1 if size.get('available', False) else 0
                     all_available += available_value
+
+                    available_value = available_value if product.is_active else 0
 
                     if available_value and is_main_article:
                         main_article = str(1)
@@ -329,6 +331,8 @@ class CategoryAdmin(admin.ModelAdmin):
                         ]
                         product_list.append(item)
                     counter += 1
+
+                all_available = all_available if product.is_active else 0
 
                 # title
                 all_size = ",".join(sorted(all_sizes))
