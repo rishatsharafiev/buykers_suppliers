@@ -106,8 +106,8 @@ services:
 ### Selenoid ################################################
   selenoid:
     build: ./selenoid
-    ports:
-      - "${SELENOID_PORT}:4444"
+#    ports:
+#      - "${SELENOID_PORT}:4444"
     volumes:
       - ${SELENOID_PATH}/selenoid:/etc/selenoid:ro
       - /var/run/docker.sock:/var/run/docker.sock
