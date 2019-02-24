@@ -261,6 +261,7 @@ class ProductParser:
             "screenResolution": "736x414x8",
             "enableVNC": True,
             "enableVideo": False,
+            "pageLoadStrategy": "none",
             "chromeOptions": {
                 'args': [
                     '--disable-notifications',
@@ -288,7 +289,6 @@ class ProductParser:
             for product_item in products_items:
                 try:
                     driver.get(product_item.get('link'))
-                    driver.implicitly_wait(1)
                     new_item_data = self.get_product(driver, product_item.get('link'))
 
                     new_item_data['status'] = Product.STATUS_CHOICE_DONE
