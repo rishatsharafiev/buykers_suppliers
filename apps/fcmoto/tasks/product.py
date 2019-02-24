@@ -19,9 +19,9 @@ def product_task(self, product_ids):
             product = Product.objects.filter(id=item.get('id')).first()
             status = item.get('status')
             if product and status == Product.STATUS_CHOICE_DONE:
-                product.name = item.get('name')
-                product.manufacturer = item.get('manufacturer')
-                product.name_url = item.get('name_url')
+                product.name = item.get('name', '')[:255]
+                product.manufacturer = item.get('manufacturer', '')[:255]
+                product.name_url = item.get('name_url', '')[:255]
                 product.price = item.get('price')
                 product.front_picture = item.get('front_picture')
                 product.back_picture = item.get('back_picture')
@@ -32,7 +32,7 @@ def product_task(self, product_ids):
                 product.status = Product.STATUS_CHOICE_DONE
                 product.save()
             elif status == Product.STATUS_CHOICE_ERROR:
-                product.name = item.get('name')
+                product.name = item.get('name', '')[:255]
                 product.status = Product.STATUS_CHOICE_ERROR
                 product.save()
 

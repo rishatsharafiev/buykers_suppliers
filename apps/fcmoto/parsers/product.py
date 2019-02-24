@@ -259,11 +259,14 @@ class ProductParser:
             "browserName": "chrome",
             "version": "72.0",
             "screenResolution": "736x414x8",
-            "enableVNC": True,
+            "enableVNC": settings.DEBUG,
             "enableVideo": False,
-            "pageLoadStrategy": "none",
+            "pageLoadStrategy": "normal",
             "chromeOptions": {
                 'args': [
+                    # '--blink-settings=imagesEnabled=false',
+                    '--disk-cache-size=33554432',
+                    '--incognito',
                     '--disable-notifications',
                     '--disable-logging',
                     '--disable-infobars',
@@ -271,16 +274,17 @@ class ProductParser:
                     '--disable-web-security',
                     '--no-sandbox',
                     '--disable-gpu',
-                    # '--headless',
                     '--silent',
                     '--disable-popup-blocking',
-                    '--incognito',
                     '--lang=ru',
                     '--ignore-certificate-errors',
                     f'--user-agent={random.choice(self.user_agents)}'
                 ]
             }
         }
+
+        if not settings.DEBUG:
+            capabilities['chromeOptions']['args'].append('--headless')
 
         driver = webdriver.Remote(command_executor=settings.SELENOID_HUB, desired_capabilities=capabilities)
         # Product item: {'id': 2, 'link': 'http://link_to_item.com/'}
