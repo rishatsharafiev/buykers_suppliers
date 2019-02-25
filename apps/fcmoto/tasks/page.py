@@ -38,7 +38,7 @@ def page_task(self, page_id):
         products = list(Product.objects.filter(category=page.category, page=page))
 
         recycle = True
-        slice_count = 20
+        slice_count = 10
         product_ids = []
 
         while recycle:

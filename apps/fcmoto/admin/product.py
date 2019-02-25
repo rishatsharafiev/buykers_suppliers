@@ -11,7 +11,7 @@ class ProductAdmin(admin.ModelAdmin):
         products = list(products)
 
         recycle = True
-        slice_count = 20
+        slice_count = 10
         product_ids = []
 
         while recycle:
