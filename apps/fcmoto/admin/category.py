@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.shortcuts import HttpResponse
 from transliterate import detect_language, translit
 
-from .inlines.category_info import CategoryInfoInlineAdmin
+from .inlines import CategoryInfoInlineAdmin
 from ..models import Product
 from ..tasks import category_task
 
