@@ -258,7 +258,7 @@ class ProductParser:
         capabilities = {
             "browserName": "chrome",
             "version": "72.0",
-            "screenResolution": "736x414x8",
+            "screenResolution": "800x600x16",
             "enableVNC": settings.DEBUG,
             "enableVideo": False,
             "pageLoadStrategy": "normal",
@@ -287,6 +287,8 @@ class ProductParser:
             capabilities['chromeOptions']['args'].append('--headless')
 
         driver = webdriver.Remote(command_executor=settings.SELENOID_HUB, desired_capabilities=capabilities)
+        driver.maximize_window()
+
         # Product item: {'id': 2, 'link': 'http://link_to_item.com/'}
         products = []
         try:
