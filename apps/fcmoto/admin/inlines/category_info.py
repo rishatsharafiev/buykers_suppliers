@@ -3,7 +3,7 @@ from django.contrib import admin
 from ...models import CategoryInfo
 
 
-class CategoryInfoInlineAdmin(admin.StackedInline):
+class CategoryInfoInlineAdmin(admin.TabularInline):
     """CategoryInfo Inline Admin"""
 
     model = CategoryInfo
