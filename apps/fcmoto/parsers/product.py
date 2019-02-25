@@ -259,7 +259,7 @@ class ProductParser:
             "browserName": "chrome",
             "version": "72.0",
             "screenResolution": "800x600x16",
-            "enableVNC": settings.DEBUG,
+            "enableVNC": True,
             "enableVideo": False,
             "pageLoadStrategy": "normal",
             "chromeOptions": {
@@ -283,8 +283,8 @@ class ProductParser:
             }
         }
 
-        if not settings.DEBUG:
-            capabilities['chromeOptions']['args'].append('--headless')
+        # if not settings.DEBUG:
+        #     capabilities['chromeOptions']['args'].append('--headless')
 
         driver = webdriver.Remote(command_executor=settings.SELENOID_HUB, desired_capabilities=capabilities)
         driver.maximize_window()
@@ -364,10 +364,13 @@ class ProductParser:
             self.get_element_by_css_selector(driver, '#ProductThumbBar > li:nth-child(2) > img')
 
         back_picture = None
-        if activate_second_picture:
-            activate_second_picture.click()
-            time.sleep(2)
-            back_picture = self.get_element_by_css_selector(driver, '#ICImageMediumLarge')
+        try:
+            if activate_second_picture:
+                activate_second_picture.click()
+                time.sleep(2)
+                back_picture = self.get_element_by_css_selector(driver, '#ICImageMediumLarge')
+        except WebDriverException:
+            pass
         back_picture = back_picture.get_attribute('src') if activate_second_picture and back_picture else ''
 
         # 'Описание'
