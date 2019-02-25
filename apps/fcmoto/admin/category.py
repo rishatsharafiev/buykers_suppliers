@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.shortcuts import HttpResponse
 from transliterate import detect_language, translit
 
-from .inlines import CategoryInfoInlineAdmin
+from .inlines.category_info import CategoryInfoInlineAdmin
 from ..models import Product
 from ..tasks import category_task
 
@@ -417,4 +417,4 @@ class CategoryAdmin(admin.ModelAdmin):
     list_per_page = 20
     readonly_fields = ('created_at', 'updated_at',)
     actions = (parse, export_as_csv)
-    inlines = (CategoryInfoInlineAdmin,)
+    inlines = [CategoryInfoInlineAdmin, ]
