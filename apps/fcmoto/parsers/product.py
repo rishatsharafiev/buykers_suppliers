@@ -265,7 +265,7 @@ class ProductParser:
             "chromeOptions": {
                 'args': [
                     # '--blink-settings=imagesEnabled=false',
-                    '--disk-cache-size=33554432',
+                    # '--disk-cache-size=33554432',
                     '--incognito',
                     '--disable-notifications',
                     '--disable-logging',
@@ -293,6 +293,8 @@ class ProductParser:
             for product_item in products_items:
                 try:
                     driver.get(product_item.get('link'))
+                    driver.implicitly_wait(1)
+
                     new_item_data = self.get_product(driver, product_item.get('link'))
 
                     new_item_data['status'] = Product.STATUS_CHOICE_DONE
