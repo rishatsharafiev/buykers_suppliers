@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.shortcuts import HttpResponse
 from transliterate import detect_language, translit
 
+from .inlines import CategoryInfoInlineAdmin
 from ..models import Product
 from ..tasks import category_task
 
@@ -65,153 +66,153 @@ class CategoryAdmin(admin.ModelAdmin):
             ]
             csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            # подзаголовок 1
-            col_names = [
-                '<Категория>',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '1',
-                '',
-                '',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера типа «kategoriya»',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ]
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
-
-            # подзаголовок 1
-            col_names = [
-                '!подкатегория1',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '1',
-                '',
-                '',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера типа «kategoriya1»',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ]
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
-
-            # подзаголовок 2
-            col_names = [
-                '!подкатегория2',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '1',
-                '',
-                '',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера типа «kategoriya2»',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ]
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
-
-            # подзаголовок 3
-            col_names = [
-                '!подкатегория3',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '1',
-                '',
-                '',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера',
-                'текст пользователя парсера типа «kategoriya3»',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ]
-            csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
+            # # подзаголовок 1
+            # col_names = [
+            #     '<Категория>',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '1',
+            #     '',
+            #     '',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера типа «kategoriya»',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            # ]
+            # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
+            #
+            # # подзаголовок 1
+            # col_names = [
+            #     '!подкатегория1',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '1',
+            #     '',
+            #     '',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера типа «kategoriya1»',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            # ]
+            # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
+            #
+            # # подзаголовок 2
+            # col_names = [
+            #     '!подкатегория2',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '1',
+            #     '',
+            #     '',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера типа «kategoriya2»',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            # ]
+            # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
+            #
+            # # подзаголовок 3
+            # col_names = [
+            #     '!подкатегория3',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '1',
+            #     '',
+            #     '',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера',
+            #     'текст пользователя парсера типа «kategoriya3»',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            #     '',
+            # ]
+            # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
             products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE)
 
@@ -219,6 +220,42 @@ class CategoryAdmin(admin.ModelAdmin):
 
             category_margin = category.margin if category.margin else 0
             category_delivery = category.delivery if category.delivery else 0
+
+            # category info
+            category_info_rows = category.categoryinfo_set.order_by('order')
+
+            for category_info in category_info_rows:
+                item = [
+                    category_info.name,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '1',
+                    '',
+                    '',
+                    category_info.title,
+                    category_info.meta_keywords,
+                    category_info.meta_description,
+                    category_info.link,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+                csv_writer.writerow(item)
 
             for product in products:
                 counter = 1
@@ -380,3 +417,4 @@ class CategoryAdmin(admin.ModelAdmin):
     list_per_page = 20
     readonly_fields = ('created_at', 'updated_at',)
     actions = (parse, export_as_csv)
+    inlines = (CategoryInfoInlineAdmin,)
