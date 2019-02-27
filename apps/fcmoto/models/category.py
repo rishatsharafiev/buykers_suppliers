@@ -20,7 +20,7 @@ class Category(models.Model):
 
     status = models.CharField(verbose_name='Статус', max_length=255, choices=STATUS_CHOICES, default=STATUS_CHOICE_NEW)
     name = models.CharField(verbose_name='Наименование', max_length=255)
-    link = models.URLField(verbose_name='Ссылка на категорию')
+    link = models.TextField(verbose_name='Ссылка на категорию')
 
     gender = models.CharField(verbose_name='Пол', max_length=255, default='')
     margin = models.DecimalField(verbose_name='Наценка (%)', decimal_places=2, max_digits=12, default=Decimal(0))
