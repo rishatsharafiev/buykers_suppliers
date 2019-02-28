@@ -10,6 +10,7 @@ def product_task(self, product_ids):
     """Product task"""
     try:
         products = Product.objects.filter(id__in=product_ids)
+        products.update(status=Product.STATUS_CHOICE_PROGRESS)
         products_items = [{'id': product.id, 'link': product.link} for product in products]
         product_parser = ProductParser()
         items = product_parser.get_products(products_items=products_items)
