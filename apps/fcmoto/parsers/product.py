@@ -258,10 +258,9 @@ class ProductParser:
         capabilities = {
             "browserName": "chrome",
             "version": "72.0",
-            "screenResolution": "800x600x16",
+            "screenResolution": "600x400x8",
             "enableVNC": True,
             "enableVideo": False,
-            "pageLoadStrategy": "normal",
             "chromeOptions": {
                 'args': [
                     # '--blink-settings=imagesEnabled=false',
@@ -287,6 +286,7 @@ class ProductParser:
         #     capabilities['chromeOptions']['args'].append('--headless')
 
         driver = webdriver.Remote(command_executor=settings.SELENOID_HUB, desired_capabilities=capabilities)
+        driver.set_page_load_timeout(60)
         driver.maximize_window()
 
         # Product item: {'id': 2, 'link': 'http://link_to_item.com/'}
