@@ -38,7 +38,7 @@ def page_task(self, page_id):
         products = list(Product.objects.filter(category=page.category, page=page))
 
         recycle = True
-        slice_count = 1
+        slice_count = 10
         product_ids = []
 
         while recycle:
@@ -49,6 +49,10 @@ def page_task(self, page_id):
                 except IndexError:
                     recycle = False
                     break
+
+            if not product_ids:
+                break
+
             # run task
             product_task.delay(product_ids=product_ids)
             product_ids = []

@@ -258,13 +258,15 @@ class ProductParser:
         capabilities = {
             "browserName": "chrome",
             "version": "72.0",
-            "screenResolution": "600x400x8",
+            "screenResolution": "1200x800x8",
             "enableVNC": True,
             "enableVideo": False,
+            "pageLoadStrategy": "none",
             "chromeOptions": {
                 'args': [
                     # '--blink-settings=imagesEnabled=false',
                     # '--disk-cache-size=33554432',
+                    '--start-maximized',
                     '--incognito',
                     '--disable-notifications',
                     '--disable-logging',
@@ -295,7 +297,6 @@ class ProductParser:
             for product_item in products_items:
                 try:
                     driver.get(product_item.get('link'))
-                    driver.implicitly_wait(1)
 
                     new_item_data = self.get_product(driver, product_item.get('link'))
 
@@ -316,8 +317,24 @@ class ProductParser:
         """Get single product"""
         initial_wait = WebDriverWait(driver, 60)
         initial_wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.ContentAreaWrapper'))
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.ICProductVariationArea [itemprop="name"]'))
         )
+        initial_wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.PriceArea .Price'))
+        )
+        initial_wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.description[itemprop="description"]'))
+        )
+        initial_wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.ICVariationSelect li > button'))
+        )
+        try:
+            initial_wait = WebDriverWait(driver, 5)
+            initial_wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.ICVariationSelect li.disabled > button'))
+            )
+        except (NoSuchElementException, TimeoutException):
+            pass
 
         # 'Наименование',
         name = self.get_element_by_css_selector(driver, '.ICProductVariationArea [itemprop="name"]')
