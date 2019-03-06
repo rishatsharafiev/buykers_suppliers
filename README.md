@@ -26,10 +26,10 @@ sudo apt-get install docker-ce -y
 # docker compose
 sudo pip install docker-compose
 
-# enable swap 2G
+# enable swap 4G
 sudo swapoff /swapfile
 
-sudo fallocate -l 2G /swapfile
+sudo fallocate -l 4G /swapfile
 sudo chmod 600 /swapfile
 
 sudo mkswap /swapfile
@@ -55,7 +55,6 @@ chown buykers_suppliers:buykers_suppliers /home/buykers_suppliers -R
 nano /etc/sudoers
 buykers_suppliers  ALL=(ALL) ALL
  # add to sudo 
-nano /etc/sudoers
 
 # docker without sudo
 su buykers_suppliers
@@ -95,6 +94,11 @@ cd devops && docker-compose -p buykers_suppliers build
 docker-compose -p buykers_suppliers up --force-recreate -d
 ```
 
+### Connect to docker
+```
+docker exec -it buykers_suppliers_app_1 sh
+```
+
 ### Static and media
 ```
 sudo chmod 777 static -R
@@ -103,7 +107,39 @@ sudo chmod 777 media -R
 
 ### Install Supervisor
 ```
-apt-get install supervisor
-mkdir /etc/supervisor
-mkdir /etc/supervisor/conf.d 
+apt-get install supervisor -y
+systemctl restart supervisor.service
+```
+
+
+### Slow Docker Network
+Source page https://aerokube.com/selenoid/latest/#_recommended_docker_settings
+
+1. Get Mac Address
+```
+ifconfig
+```
+2. Set Mac Address
+
+```
+ip link set docker0 address 00:25:90:eb:fb:3e
+```
+3. Make it permanent
+```
+# /etc/netplan/01-netcfg.yaml
+# This file describes the network interfaces available on your system
+# For more information, see netplan(5).
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens3:
+      dhcp4: yes
+    docker0:
+      macaddress: 00:80:13:c5:ff:70
+      dhcp4: true
+```
+4. 
+```
+sudo netplan apply
 ```

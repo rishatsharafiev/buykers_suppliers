@@ -32,9 +32,3 @@ SELENOID_PATH=./
 
 # selenoid ui
 SELENOID_UI_PORT=9005
-
-# portainer
-PORTAINER_PORT=9008
-
-# cadvisor
-CADVISOR_PORT=9009

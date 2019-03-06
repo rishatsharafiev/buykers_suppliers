@@ -101,13 +101,13 @@ services:
 
 ### Selenoid VNC Chrome ################################################
   selenoid-vnc-chrome:
-    image: selenoid/vnc:chrome_70.0
+    image: selenoid/vnc:chrome_72.0
 
 ### Selenoid ################################################
   selenoid:
     build: ./selenoid
-    ports:
-      - "${SELENOID_PORT}:4444"
+#    ports:
+#      - "${SELENOID_PORT}:4444"
     volumes:
       - ${SELENOID_PATH}/selenoid:/etc/selenoid:ro
       - /var/run/docker.sock:/var/run/docker.sock
@@ -125,16 +125,5 @@ services:
       - "${SELENOID_UI_PORT}:8080"
     depends_on:
       - selenoid
-    networks:
-      - backend
-
-### Portainer #########################################
-  portainer:
-    image: portainer/portainer:latest
-    ports:
-      - "${PORTAINER_PORT}:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer:/data
     networks:
       - backend
