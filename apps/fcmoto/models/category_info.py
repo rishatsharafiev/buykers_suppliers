@@ -13,7 +13,7 @@ class CategoryInfo(models.Model):
     title = models.CharField(verbose_name='Заголовок', max_length=255)
     meta_keywords = models.CharField(verbose_name='META Keywords', max_length=255)
     meta_description = models.TextField(verbose_name='META Description')
-    link = models.URLField(verbose_name='Ссылка на витрину', max_length=255)
+    link = models.CharField(verbose_name='Ссылка на витрину', max_length=255)
 
     class Meta:
         """Meta"""
