@@ -205,7 +205,6 @@ from kombu import Queue, Exchange
 # }
 CELERY_TASK_ROUTES = (
     {
-        # 'apps.fcmoto.tasks.*': {'queue': 'fcmoto'},
         'apps.fcmoto.tasks.category.category_task': {'queue': 'fcmoto_category'},
         'apps.fcmoto.tasks.product.product_task': {'queue': 'fcmoto_product'},
         'apps.fcmoto.tasks.page.page_task': {'queue': 'fcmoto_page'},
