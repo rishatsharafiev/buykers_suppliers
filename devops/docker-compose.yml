@@ -6,8 +6,6 @@ networks:
 volumes:
   app_log:
     driver: ${VOLUMES_DRIVER}
-  celery_log:
-    driver: ${VOLUMES_DRIVER}
   nginx_log:
     driver: ${VOLUMES_DRIVER}
   postgres:
@@ -28,6 +26,7 @@ services:
       - ${APP_PATH}:/app
     ports:
       - "${APP_SUPERUSER_PORT}:9001"
+      - "${CELERY_FLOWER_PORT}:5555"
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -38,24 +37,8 @@ services:
       - backend
     depends_on:
       - postgres
-      - selenoid
-
-### Celery #########################################
-  celery:
-    build:
-      context: ../
-      dockerfile: devops/celery/Dockerfile
-    volumes:
-      - celery_log:/var/log
-      - ${APP_PATH}:/app
-    ports:
-      - "${CELERY_SUPERUSER_PORT}:9001"
-      - "${CELERY_FLOWER_PORT}:5555"
-    depends_on:
       - redis_queue
-      - app
-    networks:
-      - backend
+      - selenoid
 
 ### NGINX Server #########################################
   nginx:
