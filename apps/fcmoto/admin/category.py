@@ -1,10 +1,8 @@
 import csv
 import math
-import re
 
 from django.contrib import admin
 from django.shortcuts import HttpResponse
-from transliterate import detect_language, translit
 
 from .inlines import CategoryInfoInlineAdmin
 from ..models import Product
@@ -214,7 +212,10 @@ class CategoryAdmin(admin.ModelAdmin):
             # ]
             # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE)
+            products = category.product_set \
+                .exclude(name_url_color__isnull=True).exclude(name_url_color__exact='')\
+                .filter(status=Product.STATUS_CHOICE_DONE, is_active=True)\
+                .distinct('name_url_color')
 
             bage_html = '<div class="badge" style="background-color: #ff8c2b;"><span>в Европе</span></div>'
 
@@ -265,7 +266,7 @@ class CategoryAdmin(admin.ModelAdmin):
                 is_main_article = True
 
                 name = product.name
-                name_url = product.name_url
+                name_url_color = product.name_url_color
                 manufacturer = product.manufacturer
                 front_picture = product.front_picture
                 back_picture = product.back_picture
@@ -277,16 +278,6 @@ class CategoryAdmin(admin.ModelAdmin):
                 color_value = product.attributes.get('color', '')
                 gender_value = product.category.gender if product.category else ''
                 keywords = ", ".join(name.split(' '))
-
-                name_url_cleaned = re.sub(r'(\-\d{4})$', '', name_url)
-                color_value_cleaned = re.sub(r'[\-\/\s]', '-', color_value.lower())
-
-                lang = detect_language(color_value_cleaned)
-                color_value_translated = translit(color_value_cleaned, 'ru', reversed=lang)
-                if color_value_translated:
-                    name_url_unique = f'{name_url_cleaned}-{color_value_translated}'
-                else:
-                    name_url_unique = f'{name_url_cleaned}'
 
                 for size in sizes:
                     size_value = size.get('size', '').strip()
@@ -326,7 +317,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             name,
                             keywords,
                             description_text,
-                            name_url_unique,
+                            name_url_color,
                             '',
                             '',
                             str(size_value),
@@ -358,7 +349,7 @@ class CategoryAdmin(admin.ModelAdmin):
                             '',
                             '',
                             '',
-                            name_url_unique,
+                            name_url_color,
                             '',
                             '',
                             str(size_value),
@@ -396,7 +387,7 @@ class CategoryAdmin(admin.ModelAdmin):
                     name,
                     keywords,
                     description_text,
-                    name_url_unique,
+                    name_url_color,
                     manufacturer,
                     gender_value,
                     '<{{{all_size}}}>'.format(all_size=all_size).replace('<{}>', ''),

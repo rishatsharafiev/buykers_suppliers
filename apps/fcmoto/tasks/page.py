@@ -21,9 +21,6 @@ def page_task(self, page_id):
 
         page_parser = PageParser(page_url=page.page_url)
 
-        # set product.is_active False
-        Product.objects.filter(category=page.category, page=page).update(is_active=False)
-
         # save new links and update old ones
         links = page_parser.get_links()
         for link in links:
@@ -33,6 +30,9 @@ def page_task(self, page_id):
                                                  'status': Product.STATUS_CHOICE_NEW,
                                                  'is_active': True,
                                              })
+
+        # set product.is_active False
+        Product.objects.filter(category=page.category, page=page).update(is_active=False)
 
         # get all products from page for parsing
         products = list(Product.objects.filter(category=page.category, page=page))

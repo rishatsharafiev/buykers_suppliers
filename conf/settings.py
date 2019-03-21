@@ -210,7 +210,7 @@ CELERY_TASK_ROUTES = (
         'apps.fcmoto.tasks.page.page_task': {'queue': 'fcmoto_page'},
     }
 )
-CELERY_TASK_QUEUE_HA_POLICY = {'all'}  # RabbitMQ
+CELERY_TASK_QUEUE_HA_POLICY = None  # RabbitMQ
 CELERY_TASK_QUEUE_MAX_PRIORITY = None  # RabbitMQ
 # CELERY_WORKER_DIRECT = False
 CELERY_TASK_CREATE_MISSING_QUEUES = True

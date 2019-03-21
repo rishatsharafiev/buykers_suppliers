@@ -1,5 +1,8 @@
+import re
+
 from celery import shared_task
 from selenium.common.exceptions import WebDriverException
+from transliterate import detect_language, translit
 
 from ..models import Product
 from ..parsers import ProductParser
@@ -20,15 +23,31 @@ def product_task(self, product_ids):
             product = Product.objects.filter(id=item.get('id')).first()
             status = item.get('status')
             if product and status == Product.STATUS_CHOICE_DONE:
+                name_url = item.get('name_url', '')[:255]
+                attributes = item.get('attributes')
+
                 product.name = item.get('name', '')[:255]
                 product.manufacturer = item.get('manufacturer', '')[:255]
-                product.name_url = item.get('name_url', '')[:255]
+                product.name_url = name_url
                 product.price = item.get('price')
                 product.front_picture = item.get('front_picture')
                 product.back_picture = item.get('back_picture')
                 product.description_text = item.get('description_text')
                 product.description_html = item.get('description_html')
-                product.attributes = item.get('attributes')
+                product.attributes = attributes
+
+                name_url_cleaned = re.sub(r'(\-\d{4})$', '', name_url)
+                color_value = attributes.get('color', '')
+                color_value_cleaned = re.sub(r'[\-\/\s]', '-', color_value.lower())
+
+                lang = detect_language(color_value_cleaned)
+                color_value_translated = translit(color_value_cleaned, 'ru', reversed=lang)
+                if color_value_translated:
+                    name_url_color = f'{name_url_cleaned}-{color_value_translated}'
+                else:
+                    name_url_color = f'{name_url_cleaned}'
+
+                product.name_url_color = name_url_color
 
                 product.status = Product.STATUS_CHOICE_DONE
                 product.save()
