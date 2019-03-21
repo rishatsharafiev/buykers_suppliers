@@ -28,6 +28,7 @@ class Product(models.Model):
     link = models.TextField(verbose_name='Ссылка для сбора')
     name = models.CharField(verbose_name='Название', max_length=255, blank=True, null=True)
     name_url = models.CharField(verbose_name='Название url', max_length=255, blank=True, null=True)
+    name_url_color = models.CharField(verbose_name='Название url + цвет', max_length=255, blank=True, null=True)
     front_picture = models.TextField(verbose_name='Передний план', validators=[URLValidator], blank=True, null=True)
     back_picture = models.TextField(verbose_name='Задний план', validators=[URLValidator], blank=True, null=True)
     price = models.DecimalField(verbose_name='Цена', max_digits=12, decimal_places=2,
