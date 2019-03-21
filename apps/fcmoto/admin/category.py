@@ -212,7 +212,9 @@ class CategoryAdmin(admin.ModelAdmin):
             # ]
             # csv_writer.writerow([item.encode('utf8').decode('utf8') for item in col_names])
 
-            products = category.product_set.filter(status=Product.STATUS_CHOICE_DONE, is_active=True)\
+            products = category.product_set \
+                .exclude(name_url_color__isnull=True).exclude(name_url_color__exact='')\
+                .filter(status=Product.STATUS_CHOICE_DONE, is_active=True)\
                 .distinct('name_url_color')
 
             bage_html = '<div class="badge" style="background-color: #ff8c2b;"><span>в Европе</span></div>'
