@@ -1,15 +1,145 @@
-# Django Template
+# Buykers suppliers
 
-### Setup database
+### Pre-install configuration
 ```
-$ sudo su - postgres
-$ psql
-# CREATE USER django_template WITH SUPERUSER ENCRYPTED PASSWORD 'django_template';
-# CREATE DATABASE django_template WITH OWNER 'django_template';
-# \q
+# docker
+sudo apt-get update
+sudo apt-get install htop python-pip -y
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common -y
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   edge"
+sudo apt-get update
+sudo apt-get install docker-ce -y
+
+
+
+# docker compose
+sudo pip install docker-compose
+
+# enable swap 4G
+sudo swapoff /swapfile
+
+sudo fallocate -l 4G /swapfile
+sudo chmod 600 /swapfile
+
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo swapon --show
+
+sudo cp /etc/fstab /etc/fstab.bak
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+sudo nano /etc/sysctl.conf
+vm.swappiness=10 # add to /etc/sysctl.conf
+vm.vfs_cache_pressure = 50 # add to /etc/sysctl.conf
+
+
+sudo sysctl vm.swappiness=10
+sudo sysctl vm.vfs_cache_pressure=50
+
+# create user 
+mkdir /home/buykers_suppliers
+useradd -d /home/buykers_suppliers buykers_suppliers
+passwd buykers_suppliers # add password to user
+chown buykers_suppliers:buykers_suppliers /home/buykers_suppliers -R
+nano /etc/sudoers
+buykers_suppliers  ALL=(ALL) ALL
+ # add to sudo 
+
+# docker without sudo
+su buykers_suppliers
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+# ufw
+sudo apt install ufw
+sudo nano /etc/default/ufw 
+IPV6=yes # in  /etc/default/ufw
+
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+sudo ufw allow ssh
+sudo ufw allow 22
+sudo ufw allow 2222
+
+sudo ufw enable
+
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 54321/tcp
+sudo ufw allow 9001:9005/tcp
+sudo ufw allow 9008:9009/tcp
+sudo ufw allow 9010/tcp
 ```
 
-### Apply django migrations
+### Docker Compose build
 ```
-python manage.py migrate
+rm celeryev.pid
+cd devops && docker-compose -p buykers_suppliers build
+```
+
+### Docker Compose up
+```
+docker-compose -p buykers_suppliers up --force-recreate -d
+```
+
+### Connect to docker
+```
+docker exec -it buykers_suppliers_app_1 sh
+```
+
+### Static and media
+```
+sudo chmod 777 static -R
+sudo chmod 777 media -R
+```
+
+### Install Supervisor
+```
+apt-get install supervisor -y
+systemctl restart supervisor.service
+```
+
+
+### Slow Docker Network
+Source page https://aerokube.com/selenoid/latest/#_recommended_docker_settings
+
+1. Get Mac Address
+```
+ifconfig
+```
+2. Set Mac Address
+
+```
+ip link set docker0 address 00:25:90:eb:fb:3e
+```
+3. Make it permanent
+```
+# /etc/netplan/01-netcfg.yaml
+# This file describes the network interfaces available on your system
+# For more information, see netplan(5).
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens3:
+      dhcp4: yes
+    docker0:
+      macaddress: 00:80:13:c5:ff:70
+      dhcp4: true
+```
+4. 
+```
+sudo netplan apply
 ```

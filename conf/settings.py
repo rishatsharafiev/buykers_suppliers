@@ -45,10 +45,12 @@ THIRD_PARTY_APPS = [
     'django_celery_results',
     'django_celery_monitor',
     'raven.contrib.django.raven_compat',
+    'jsoneditor',
 ]
 
 LOCAL_APPS = [
-    'apps.bpc'
+    'apps.bpc',
+    'apps.fcmoto',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -150,8 +152,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440 * 4
 ### Celery
 # General settings
 CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TIMEZONE = 'UTC'  # 'Europe/Moscow'
-CELERY_ENABLE_UTC = True  # False
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_ENABLE_UTC = False
 
 # Task settings
 CELERY_TASK_ANNOTATIONS = {'*': {'rate_limit': '10/s'}}
@@ -175,12 +177,12 @@ CELERY_TASK_STORE_ERRORS_EVEN_IF_IGNORED = False
 CELERY_TASK_TRACK_STARTED = False
 CELERY_TASK_TIME_LIMIT = int(datetime.timedelta(days=1).total_seconds())
 # CELERY_TASK_SOFT_TIME_LIMIT = None
-CELERY_TASK_ACKS_LATE = False
+CELERY_TASK_ACKS_LATE = True
 CELERY_TASK_REJECT_ON_WORKER_LOST = False
 # CELERY_TASK_DEFAULT_RATE_LIMIT = '1000/m'
 
 # Task result backend settings
-CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', cast=str, default='django-db') # django-db | redis://localhost
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', cast=str, default='django-db')  # django-db | redis://localhost
 CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS = {'visibility_timeout': 18000}
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_COMPRESSION = 'gzip'
@@ -203,11 +205,13 @@ from kombu import Queue, Exchange
 # }
 CELERY_TASK_ROUTES = (
     {
-        'apps.bpc.tasks.*': {'queue': 'low'},
+        'apps.fcmoto.tasks.category.category_task': {'queue': 'fcmoto_category'},
+        'apps.fcmoto.tasks.product.product_task': {'queue': 'fcmoto_product'},
+        'apps.fcmoto.tasks.page.page_task': {'queue': 'fcmoto_page'},
     }
 )
-CELERY_TASK_QUEUE_HA_POLICY = {'all'} # RabbitMQ
-CELERY_TASK_QUEUE_MAX_PRIORITY = None # RabbitMQ
+CELERY_TASK_QUEUE_HA_POLICY = None  # RabbitMQ
+CELERY_TASK_QUEUE_MAX_PRIORITY = None  # RabbitMQ
 # CELERY_WORKER_DIRECT = False
 CELERY_TASK_CREATE_MISSING_QUEUES = True
 CELERY_TASK_DEFAULT_QUEUE = 'celery'
@@ -239,10 +243,10 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 18000}
 CELERY_IMPORTS = []
 CELERY_INCLUDE = []
 # CELERY_WORKER_CONCURRENCY = 4 # Default: Number of CPU cores.
-CELERY_WORKER_PREFETCH_MULTIPLIER = 4
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_WORKER_LOST_WAIT = 10.0
-# CELERY_WORKER_MAX_TASKS_PER_CHILD = # Default: no limit
-CELERY_WORKER_MAX_MEMORY_PER_CHILD = 20000 # Default: no limit
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1  # Default: no limit
+CELERY_WORKER_MAX_MEMORY_PER_CHILD = 120000  # Default: no limit
 CELERY_WORKER_DISABLE_RATE_LIMITS = False
 CELERY_WORKER_STATE_DB = None
 CELERY_WORKER_TIMER_PRECISION = 1.0
@@ -251,8 +255,8 @@ CELERY_WORKER_ENABLE_REMOTE_CONTROL = True
 # Event
 CELERY_WORKER_SEND_TASK_EVENTS = False
 CELERY_TASK_SEND_SENT_EVENT = False
-CELERY_EVENT_QUEUE_TTL = 5.0 # amqp
-CELERY_EVENT_QUEUE_EXPIRES = 60.0 # amqp
+CELERY_EVENT_QUEUE_TTL = 5.0  # amqp
+CELERY_EVENT_QUEUE_EXPIRES = 60.0  # amqp
 CELERY_EVENT_QUEUE_PREFIX = 'celeryev'
 CELERY_EVENT_SERIALIZER = 'json'
 
@@ -316,7 +320,7 @@ LOGGING = {
             'datefmt': '%Y-%m-%d %H:%M:%S',
             'format': '%(levelname) -10s %(asctime)s '
                       '%(processName) -35s %(name) -35s '
-                      '%(funcName) -30s: %(message)s'
+                      '%(funcName) -30s %(lineno)d: %(message)s'
         },
     },
     'handlers': {
@@ -346,5 +350,13 @@ LOGGING = {
             'handlers': ['console', 'sentry'],
             'propagate': False,
         },
+        'apps.fcmoto': {
+            'level': LOG_LEVEL,
+            'handlers': ['console', 'sentry'],
+            'propagate': False,
+        },
     },
 }
+
+# Selenoid
+SELENOID_HUB = env('SELENOID_HUB', cast=str, default='http://selenoid:4444/wd/hub')
